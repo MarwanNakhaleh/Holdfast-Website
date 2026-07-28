@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Holdfast — design directions</title>
+<meta name="description" content="Holdfast — five design directions for the landing page.">
+<style>
+  :root { --ink: #1c2024; --paper: #fafaf8; --accent: #b4552d; }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font: 16px/1.6 -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink); background: var(--paper);
+    padding: 3rem 1.5rem; max-width: 44rem; margin: 0 auto;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: .25rem; }
+  p.lede { color: #5a6067; margin-bottom: 2rem; }
+  ol { list-style: none; padding: 0; display: grid; gap: .75rem; }
+  a.card {
+    display: block; padding: 1rem 1.25rem; border: 1px solid #d9d9d4;
+    border-radius: 10px; text-decoration: none; color: inherit;
+    background: #fff; transition: border-color .15s;
+  }
+  a.card:hover, a.card:focus-visible { border-color: var(--accent); }
+  a.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a.card strong { display: block; }
+  a.card span { color: #5a6067; font-size: .9rem; }
+  footer { margin-top: 2.5rem; font-size: .85rem; color: #8a8f95; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+  <h1>Design directions</h1>
+  <p class="lede">Five takes on the Holdfast landing page. Each is a complete,
+  self-contained page; the one at the site root is the current pick — swap it by
+  copying any variant's <code>index.html</code> over the root one.</p>
+  <ol>
+    <li><a class="card" href="front-panel/index.html">
+      <strong>The front panel</strong>
+      <span>Network-hardware idiom: status LEDs, etched labels, PCB navy and copper.</span></a></li>
+    <li><a class="card" href="tangible-brick/index.html">
+      <strong>The tangible brick</strong>
+      <span>Chunky, toy-like physicality — a CSS-built brick you can almost hold.</span></a></li>
+    <li><a class="card" href="query-log/index.html">
+      <strong>The query log</strong>
+      <span>A live DNS ledger as the hero: trackers struck through in real time, on paper-light ground.</span></a></li>
+    <li><a class="card" href="schematic/index.html">
+      <strong>The household schematic</strong>
+      <span>An installer's annotated wiring diagram of your home, drawn in SVG.</span></a></li>
+    <li><a class="card" href="quiet-home/index.html">
+      <strong>The quiet home</strong>
+      <span>Dusk tones and one orchestrated moment: the noise fades, the home goes quiet.</span></a></li>
+  </ol>
+  <footer><a href="../index.html">← back to the site</a></footer>
+</body>
+</html>

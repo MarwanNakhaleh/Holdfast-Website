@@ -1,0 +1,16 @@
+# Netlify deploy config — static site, no build step.
+# The publish directory is the repo root (HTML files live at top level,
+# design directions under designs/).
+[build]
+  publish = "."
+
+# Long-cache fonts and images; HTML should always revalidate.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/designs/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

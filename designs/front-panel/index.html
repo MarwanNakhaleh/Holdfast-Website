@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holdfast — one small box, no more ads</title>
+<meta name="description" content="Holdfast is a small device that plugs into your router and blocks ads and trackers for every device on your network. No subscriptions, no cloud account.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --substrate: #0d2129;        /* PCB deep navy-teal */
+    --substrate-deep: #091920;
+    --panel: #14333d;            /* faceplate teal */
+    --panel-edge: #1d4450;
+    --copper: #cf8a4e;           /* copper trace */
+    --copper-bright: #e8a868;
+    --silk: #c3d6da;             /* silkscreen off-white */
+    --silk-dim: #7fa0a8;
+    --led-green: #5fe08a;
+    --led-amber: #ffb44d;
+    --led-red: #ff6b5e;
+    --ink: #dce8ea;              /* body text */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    background:
+      radial-gradient(1100px 500px at 50% -120px, #123039 0%, transparent 65%),
+      var(--substrate);
+    color: var(--ink);
+    font-family: "Atkinson Hyperlegible", Georgia, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--copper-bright); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: #f5c08a; }
+
+  :is(a, button, summary):focus-visible {
+    outline: 2px solid var(--copper-bright);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  .display {
+    font-family: "Chakra Petch", "Atkinson Hyperlegible", sans-serif;
+  }
+  .mono {
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .wrap {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  /* ---------- copper trace divider ---------- */
+  .trace {
+    border: none;
+    height: 22px;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='22' viewBox='0 0 960 22' preserveAspectRatio='none'%3E%3Cpath d='M0 11 H360 L376 3 H584 L600 11 H960' fill='none' stroke='%23cf8a4e' stroke-width='1.5' opacity='0.55'/%3E%3Ccircle cx='360' cy='11' r='3' fill='%230d2129' stroke='%23cf8a4e' stroke-width='1.5'/%3E%3Ccircle cx='600' cy='11' r='3' fill='%230d2129' stroke='%23cf8a4e' stroke-width='1.5'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- header ---------- */
+  header.site {
+    padding: 1.1rem 0;
+  }
+  header.site .wrap {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .wordmark {
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--silk);
+  }
+  .wordmark .dot { color: var(--copper); }
+  header.site .rev {
+    font-size: 0.72rem;
+    color: var(--silk-dim);
+    letter-spacing: 0.08em;
+  }
+
+  /* ================= HERO: the faceplate ================= */
+  .hero {
+    padding: 2.25rem 0 3.5rem;
+  }
+
+  .faceplate {
+    position: relative;
+    background:
+      linear-gradient(178deg, #1a3f4b 0%, var(--panel) 34%, #102a33 100%);
+    border: 1px solid var(--panel-edge);
+    border-radius: 14px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.07) inset,
+      0 -2px 10px rgba(0,0,0,0.35) inset,
+      0 24px 60px -24px rgba(0,0,0,0.7);
+    padding: 2.5rem 2.75rem 2.25rem;
+  }
+
+  /* corner screws */
+  .screw {
+    position: absolute;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #3d6672, #14333d 70%);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.35);
+  }
+  .screw::after {
+    content: "";
+    position: absolute;
+    left: 2px; right: 2px; top: 6px;
+    height: 1.5px;
+    background: rgba(6, 18, 22, 0.85);
+    transform: rotate(38deg);
+  }
+  .screw.tl { top: 12px; left: 12px; }
+  .screw.tr { top: 12px; right: 12px; }
+  .screw.bl { bottom: 12px; left: 12px; }
+  .screw.br { bottom: 12px; right: 12px; transform: rotate(65deg); }
+
+  .plate-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(195, 214, 218, 0.18);
+    padding-bottom: 0.8rem;
+    margin-bottom: 1.9rem;
+  }
+  .model {
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    color: var(--silk);
+    font-weight: 500;
+  }
+  .serial {
+    font-size: 0.7rem;
+    color: var(--silk-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .hero h1 {
+    font-weight: 600;
+    font-size: clamp(1.75rem, 4.6vw, 2.85rem);
+    line-height: 1.14;
+    letter-spacing: 0.01em;
+    color: #eef6f7;
+    max-width: 21ch;
+    text-wrap: balance;
+  }
+  .hero .sub {
+    margin-top: 1rem;
+    max-width: 52ch;
+    color: var(--ink);
+  }
+  .hero .sub strong { color: #fff; }
+
+  /* --- the LED row --- */
+  .led-row {
+    margin-top: 2.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.25rem 3rem;
+    align-items: flex-end;
+  }
+  .led-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 6.5rem;
+  }
+  .led {
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    position: relative;
+    /* recessed bezel around the LED */
+    box-shadow:
+      0 0 0 3px #0c2129,
+      0 0 0 4px rgba(255,255,255,0.06),
+      0 1px 3px rgba(0,0,0,0.6) inset;
+  }
+  .led.green {
+    background: radial-gradient(circle at 38% 32%, #d9ffe4, var(--led-green) 55%, #1f7a45);
+    box-shadow:
+      0 0 0 3px #0c2129, 0 0 0 4px rgba(255,255,255,0.06),
+      0 0 10px 2px rgba(95, 224, 138, 0.55);
+  }
+  .led.amber {
+    background: radial-gradient(circle at 38% 32%, #ffe9c8, var(--led-amber) 55%, #9c5f14);
+    box-shadow:
+      0 0 0 3px #0c2129, 0 0 0 4px rgba(255,255,255,0.06),
+      0 0 10px 2px rgba(255, 180, 77, 0.5);
+  }
+  .led.red {
+    background: radial-gradient(circle at 38% 32%, #ffd3ce, var(--led-red) 55%, #99251c);
+    box-shadow:
+      0 0 0 3px #0c2129, 0 0 0 4px rgba(255,255,255,0.06),
+      0 0 10px 2px rgba(255, 107, 94, 0.5);
+  }
+
+  @keyframes led-breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+  @keyframes led-tick {
+    0%, 92%, 100% { opacity: 1; }
+    94%, 97% { opacity: 0.3; }
+  }
+  .led.green  { animation: led-breathe 3.4s ease-in-out infinite; }
+  .led.amber  { animation: led-breathe 4.1s ease-in-out 0.9s infinite; }
+  .led.red    { animation: led-tick 2.6s steps(1) 0.4s infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .led.green, .led.amber, .led.red { animation: none; }
+  }
+
+  .led-label {
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--silk);
+    text-align: center;
+    /* etched effect */
+    text-shadow: 0 1px 0 rgba(0,0,0,0.55);
+  }
+  .led-sub {
+    font-size: 0.64rem;
+    color: var(--silk-dim);
+    letter-spacing: 0.06em;
+  }
+
+  /* eth port + CTA row along the plate's bottom */
+  .plate-foot {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .port {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .port-jack {
+    width: 40px; height: 30px;
+    border-radius: 4px;
+    background: #081418;
+    box-shadow: 0 0 0 2px #1d4450, 0 2px 4px rgba(0,0,0,0.5) inset;
+    position: relative;
+  }
+  .port-jack::after {
+    content: "";
+    position: absolute;
+    left: 12px; right: 12px; bottom: 0;
+    height: 8px;
+    background: #081418;
+    border-left: 2px solid #1d4450;
+    border-right: 2px solid #1d4450;
+  }
+  .port-label {
+    font-size: 0.68rem;
+    color: var(--silk-dim);
+    letter-spacing: 0.14em;
+  }
+  .port-label b { color: var(--silk); font-weight: 500; }
+
+  .cta-group { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+  .btn {
+    display: inline-block;
+    font-family: "Chakra Petch", sans-serif;
+    font-weight: 600;
+    font-size: 0.86rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.8rem 1.4rem;
+    border-radius: 7px;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
+  .btn-copper {
+    background: linear-gradient(180deg, var(--copper-bright), var(--copper) 60%, #a96a35);
+    color: #23150a;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 6px 18px -6px rgba(207,138,78,0.6);
+  }
+  .btn-copper:hover { color: #23150a; transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--silk);
+    box-shadow: 0 0 0 1.5px rgba(195,214,218,0.4) inset;
+  }
+  .btn-ghost:hover { color: #fff; box-shadow: 0 0 0 1.5px rgba(195,214,218,0.7) inset; }
+  @media (prefers-reduced-motion: reduce) {
+    .btn { transition: none; }
+    .btn-copper:hover { transform: none; }
+  }
+
+  /* ================= sections ================= */
+  section { padding: 3.5rem 0; }
+
+  .eyebrow {
+    font-family: "Chakra Petch", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--copper);
+    margin-bottom: 0.9rem;
+  }
+  h2 {
+    font-family: "Chakra Petch", sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+    color: #eef6f7;
+    margin-bottom: 1.1rem;
+    letter-spacing: 0.01em;
+  }
+
+  /* how it works: three sentences as labeled signal path */
+  .path {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.75rem;
+  }
+  .path li {
+    border-top: 2px solid var(--copper);
+    padding-top: 1rem;
+  }
+  .path .tag {
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--silk-dim);
+    margin-bottom: 0.5rem;
+  }
+  .path p { max-width: 34ch; }
+
+  /* blocks vs limitation */
+  .duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1.75rem;
+  }
+  .card {
+    background: rgba(20, 51, 61, 0.55);
+    border: 1px solid var(--panel-edge);
+    border-radius: 10px;
+    padding: 1.6rem 1.7rem;
+  }
+  .card h3 {
+    font-family: "Chakra Petch", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--silk);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  .chip {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex: none;
+  }
+  .chip.ok { background: var(--led-green); box-shadow: 0 0 8px rgba(95,224,138,0.6); }
+  .chip.warn { background: var(--led-amber); box-shadow: 0 0 8px rgba(255,180,77,0.55); }
+  .card ul {
+    list-style: none;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .card ul li {
+    padding-left: 1.2rem;
+    position: relative;
+  }
+  .card ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--copper);
+  }
+  .card p.note { color: var(--ink); }
+  .card p.note + p.note { margin-top: 0.7rem; }
+
+  /* DIY */
+  .diy-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 2.25rem;
+    align-items: start;
+  }
+  .parts {
+    background: rgba(9, 25, 32, 0.7);
+    border: 1px dashed rgba(207, 138, 78, 0.45);
+    border-radius: 10px;
+    padding: 1.4rem 1.6rem;
+  }
+  .parts h3 {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--copper);
+    margin-bottom: 0.8rem;
+  }
+  .parts ul { list-style: none; display: grid; gap: 0.4rem; font-size: 0.95rem; }
+  .parts ul li::before { content: "— "; color: var(--silk-dim); }
+  .diy p + p { margin-top: 0.8rem; }
+  .diy .btn { margin-top: 1.5rem; }
+
+  /* kit teaser */
+  .kit {
+    background: linear-gradient(178deg, rgba(26, 63, 75, 0.5), rgba(13, 33, 41, 0.2));
+    border-top: 1px solid var(--panel-edge);
+    border-bottom: 1px solid var(--panel-edge);
+  }
+  .kit .price {
+    font-family: "Chakra Petch", sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--copper-bright);
+  }
+  .kit p { max-width: 56ch; }
+  .kit p + p { margin-top: 0.8rem; }
+  .kit .btn { margin-top: 1.5rem; }
+  .kit .soon {
+    display: inline-block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--led-amber);
+    border: 1px solid rgba(255, 180, 77, 0.4);
+    border-radius: 999px;
+    padding: 0.2rem 0.7rem;
+    margin-left: 0.6rem;
+    vertical-align: middle;
+  }
+
+  /* footer */
+  footer.site {
+    padding: 2.5rem 0 3rem;
+    color: var(--silk-dim);
+    font-size: 0.9rem;
+  }
+  footer.site .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+  footer.site nav { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+  footer.site a { color: var(--silk); }
+  footer.site .colophon { letter-spacing: 0.06em; font-size: 0.78rem; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 760px) {
+    .path { grid-template-columns: 1fr; }
+    .duo { grid-template-columns: 1fr; }
+    .diy-grid { grid-template-columns: 1fr; }
+    .faceplate { padding: 2rem 1.5rem 1.75rem; }
+    .led-row { gap: 1.6rem 2rem; }
+    section { padding: 2.75rem 0; }
+  }
+  @media (max-width: 420px) {
+    .led-unit { min-width: 5rem; }
+    .plate-foot { flex-direction: column; align-items: flex-start; }
+    .btn { width: 100%; text-align: center; }
+    .cta-group { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <span class="wordmark display">Hold<span class="dot">▪</span>fast</span>
+    <span class="rev mono" aria-hidden="true">REV A · MADE FOR YOUR NETWORK</span>
+  </div>
+</header>
+
+<main>
+  <!-- ================= HERO ================= -->
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="wrap">
+      <div class="faceplate">
+        <span class="screw tl" aria-hidden="true"></span>
+        <span class="screw tr" aria-hidden="true"></span>
+        <span class="screw bl" aria-hidden="true"></span>
+        <span class="screw br" aria-hidden="true"></span>
+
+        <div class="plate-head">
+          <span class="model display mono">HOLDFAST · MODEL HB-01</span>
+          <span class="serial mono">S/N 000-YOURS</span>
+        </div>
+
+        <h1 class="display" id="hero-heading">One small box. Ads gone on every device you own.</h1>
+        <p class="sub">Holdfast is a Raspberry Pi that plugs into your home router and blocks ads and trackers for <strong>everything on your network</strong> — phones, TVs, laptops, guests. No app installs per device, no subscriptions, no cloud account. Your data never leaves your home.</p>
+
+        <div class="led-row" role="img" aria-label="Status panel: ad blocking active, private DNS active, whole-home protection active">
+          <div class="led-unit">
+            <span class="led green"></span>
+            <span class="led-label">Ad blocking</span>
+            <span class="led-sub mono">AdGuard Home</span>
+          </div>
+          <div class="led-unit">
+            <span class="led amber"></span>
+            <span class="led-label">Private DNS</span>
+            <span class="led-sub mono">DNS-over-TLS</span>
+          </div>
+          <div class="led-unit">
+            <span class="led green"></span>
+            <span class="led-label">Whole-home</span>
+            <span class="led-sub mono">every device</span>
+          </div>
+          <div class="led-unit">
+            <span class="led red"></span>
+            <span class="led-label">Blocked</span>
+            <span class="led-sub mono">tracker dropped</span>
+          </div>
+        </div>
+
+        <div class="plate-foot">
+          <div class="port" aria-hidden="true">
+            <span class="port-jack"></span>
+            <span class="port-label mono"><b>ETH0</b> → router LAN</span>
+          </div>
+          <div class="cta-group">
+            <a class="btn btn-copper" href="../../guide.html">Set it up yourself</a>
+            <a class="btn btn-ghost" href="#kit">Or get the kit</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="trace" aria-hidden="true">
+
+  <!-- ================= HOW IT WORKS ================= -->
+  <section aria-labelledby="how-heading">
+    <div class="wrap">
+      <p class="eyebrow">How it works</p>
+      <h2 id="how-heading">Three parts, one job</h2>
+      <ol class="path">
+        <li>
+          <span class="tag">01 · DNS FILTER</span>
+          <p>Every ad and tracker on the internet has an address, and your devices ask for those addresses thousands of times a day — the brick simply answers "no" to the bad ones.</p>
+        </li>
+        <li>
+          <span class="tag">02 · ENCRYPTED LOOKUPS</span>
+          <p>The lookups it does allow are encrypted with DNS-over-TLS, so your internet provider can't read or sell the list of sites your home visits.</p>
+        </li>
+        <li>
+          <span class="tag">03 · THE APP</span>
+          <p>The iOS companion app finds the brick on your WiFi by itself, pairs with a 6-digit code, and walks you through protecting the whole network.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="trace" aria-hidden="true">
+
+  <!-- ================= BLOCKS VS LIMITATION ================= -->
+  <section aria-labelledby="blocks-heading">
+    <div class="wrap">
+      <p class="eyebrow">What to expect</p>
+      <h2 id="blocks-heading">What it kills — and the one thing it can't</h2>
+      <div class="duo">
+        <div class="card">
+          <h3><span class="chip ok" aria-hidden="true"></span>Blocked at the source</h3>
+          <ul>
+            <li>Web ads across every browser in the house</li>
+            <li>In-app banner ads on phones and tablets</li>
+            <li>Trackers and telemetry phoning home</li>
+            <li>Smart-TV home-screen ads</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><span class="chip warn" aria-hidden="true"></span>The honest limitation</h3>
+          <p class="note">In-stream video ads on streaming services — Disney+, Hulu, YouTube — are stitched into the video on the server side. No DNS blocker can remove them, and anyone who says theirs can is selling you something.</p>
+          <p class="note">Everything around the stream still gets cleaned up: the tracking, the banners, the telemetry.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="trace" aria-hidden="true">
+
+  <!-- ================= DIY ================= -->
+  <section class="diy" aria-labelledby="diy-heading">
+    <div class="wrap diy-grid">
+      <div>
+        <p class="eyebrow">Build it yourself</p>
+        <h2 id="diy-heading">An afternoon and about $70–90 in parts</h2>
+        <p>Everything is open source. Flash an SD card, plug the Pi into your router, run one script, and pair the app. The guide walks you through every step — including the one-time AdGuard wizard and turning on whole-home protection.</p>
+        <p>No soldering, no Linux experience needed. If you can follow a recipe, you can build this.</p>
+        <a class="btn btn-copper" href="../../guide.html">Set it up yourself</a>
+      </div>
+      <aside class="parts" aria-label="Parts list">
+        <h3>Bill of materials</h3>
+        <ul>
+          <li>Raspberry Pi 5 (2 GB is plenty)</li>
+          <li>microSD card, 16 GB or larger</li>
+          <li>The official Pi 5 power supply (27 W USB-C)</li>
+          <li>One Ethernet cable</li>
+          <li>A phone or computer on the same WiFi</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= KIT ================= -->
+  <section class="kit" id="kit" aria-labelledby="kit-heading">
+    <div class="wrap">
+      <p class="eyebrow">Prefer it ready-made?</p>
+      <h2 id="kit-heading">The pre-built kit <span class="soon">coming soon</span></h2>
+      <p>Pre-flashed and pre-configured: plug it into your router, open the app, scan the pairing code, done. No SD cards, no terminal.</p>
+      <p>Pricing is simple and stays that way: <span class="price">the cost of the parts plus $50 flat.</span> No subscriptions, ever.</p>
+      <a class="btn btn-ghost" href="mailto:closeityourself@gmail.com?subject=Tell%20me%20when%20the%20Holdfast%20Brick%20kit%20is%20ready">Email me when it's ready</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <nav aria-label="Project links">
+      <a href="https://github.com/MarwanNakhaleh/PrivacyBrickAPI">PrivacyBrickAPI on GitHub</a>
+      <a href="https://github.com/MarwanNakhaleh/PrivacyBrickUI-iOS">PrivacyBrickUI-iOS on GitHub</a>
+    </nav>
+    <p class="colophon mono">HB-01 · OPEN SOURCE · YOUR DATA STAYS HOME</p>
+  </div>
+</footer>
+
+</body>
+</html>

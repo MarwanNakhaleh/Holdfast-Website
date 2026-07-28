@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holdfast — the household schematic</title>
+<meta name="description" content="Holdfast is a small device that plugs into your router and blocks ads and trackers for every device on your network. One drawing explains the whole thing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #E9E7E0;
+    --paper-deep: #DFDCD2;
+    --ink: #33312B;
+    --ink-faint: #6E6A5E;
+    --grid: rgba(51, 49, 43, 0.07);
+    --red: #C03A2B;
+    --stamp: #3E6B4E;
+    --frame: #33312B;
+    --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+    --body: "Atkinson Hyperlegible", Georgia, sans-serif;
+    --mono: "Space Mono", "Courier New", monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  ::selection { background: var(--ink); color: var(--paper); }
+
+  a { color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: var(--red); }
+
+  :focus-visible {
+    outline: 2px dashed var(--red);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.6rem 1rem;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    z-index: 10;
+  }
+  .skip-link:focus { left: 12px; top: 12px; color: var(--paper); }
+
+  /* ---------- the drawing sheet ---------- */
+  .sheet {
+    max-width: 1120px;
+    margin: 20px auto;
+    border: 2px solid var(--frame);
+    outline: 1px solid var(--frame);
+    outline-offset: 4px;
+    background: transparent;
+  }
+  @media (max-width: 719px) {
+    .sheet { margin: 10px 8px; outline-offset: 3px; }
+  }
+
+  /* ---------- sheet header strip ---------- */
+  .sheet-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    border-bottom: 1.5px solid var(--frame);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .sheet-head > div {
+    padding: 0.55rem 0.9rem;
+    border-right: 1px solid var(--frame);
+    white-space: nowrap;
+  }
+  .sheet-head > div:last-child { border-right: none; margin-left: auto; }
+  .sheet-head .proj {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.12em;
+  }
+  .sheet-head .dim { color: var(--ink-faint); }
+  @media (max-width: 719px) {
+    .sheet-head > div:nth-child(3),
+    .sheet-head > div:nth-child(4) { display: none; }
+  }
+
+  /* ---------- section scaffolding ---------- */
+  section { padding: 3.5rem 4.5rem; border-bottom: 1.5px solid var(--frame); }
+  section:last-of-type { border-bottom: none; }
+  @media (max-width: 900px) { section { padding: 2.75rem 2rem; } }
+  @media (max-width: 500px) { section { padding: 2.25rem 1.1rem; } }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 1rem;
+  }
+  .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 26px;
+    height: 1px;
+    background: var(--ink-faint);
+    vertical-align: middle;
+    margin-right: 0.6rem;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+  h1 { font-size: clamp(2.6rem, 6.5vw, 4.6rem); text-transform: uppercase; }
+  h2 { font-size: clamp(1.9rem, 4vw, 2.9rem); text-transform: uppercase; margin-bottom: 1.2rem; }
+  h3 { font-size: 1.25rem; margin-bottom: 0.4rem; }
+
+  .lede {
+    max-width: 34em;
+    margin-top: 1.3rem;
+    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  }
+  .lede strong { font-weight: 700; }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.85rem 1.5rem;
+    border: 1.5px solid var(--ink);
+    color: var(--ink);
+    background: var(--paper);
+    box-shadow: 3px 3px 0 var(--ink);
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
+  .btn:hover { color: var(--ink); background: var(--paper-deep); transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
+  .btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+  .btn-stamp {
+    border-color: var(--stamp);
+    color: var(--stamp);
+    box-shadow: 3px 3px 0 var(--stamp);
+  }
+  .btn-stamp:hover { color: var(--stamp); box-shadow: 2px 2px 0 var(--stamp); }
+  .btn-stamp:active { box-shadow: 0 0 0 var(--stamp); }
+  @media (prefers-reduced-motion: reduce) {
+    .btn { transition: none; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero-grid { display: block; }
+  .hero-copy { max-width: 46em; }
+
+  .fig {
+    margin-top: 2.75rem;
+    border: 1px solid var(--ink-faint);
+    background: var(--paper);
+    padding: 1rem 1rem 0.4rem;
+  }
+  .fig svg { display: block; width: 100%; height: auto; }
+  .fig-caption {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--ink-faint);
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.2rem 0.4rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .fig svg.schematic-m { display: none; }
+  @media (max-width: 719px) {
+    .fig svg.schematic-d { display: none; }
+    .fig svg.schematic-m { display: block; }
+  }
+
+  /* SVG text + line defaults */
+  svg text {
+    font-family: var(--mono);
+    fill: var(--ink);
+  }
+  svg .lbl { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
+  svg .ann { font-size: 10.5px; fill: var(--ink-faint); }
+  svg .halo { paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+  svg .ann-red { font-size: 10.5px; font-weight: 700; fill: var(--red); }
+  svg .outline { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+  svg .wire { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linecap: square; }
+  svg .redwire { fill: none; stroke: var(--red); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  svg .boundary { fill: none; stroke: var(--ink-faint); stroke-width: 1.2; stroke-dasharray: 10 6; }
+  svg .hatch-line { stroke: var(--ink-faint); stroke-width: 0.6; opacity: 0.5; }
+
+  /* run hover / focus highlighting */
+  .run { cursor: default; }
+  .run .wire, .run .outline { transition: stroke 130ms ease, stroke-width 130ms ease; }
+  .run:hover .wire, .run:focus .wire,
+  .run:hover .outline, .run:focus .outline {
+    stroke: var(--stamp);
+    stroke-width: 2.5;
+  }
+  .run:hover .lbl, .run:focus .lbl { fill: var(--stamp); }
+  .run:focus { outline: none; }
+  .run:focus-visible .outline { stroke: var(--stamp); stroke-width: 3; }
+
+  /* draw-in animation (solid wires only); disabled under reduced motion */
+  .anim .drawable {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1100ms cubic-bezier(0.5, 0, 0.2, 1) 350ms;
+  }
+  .anim .fade { opacity: 0; transition: opacity 500ms ease 150ms; }
+  .anim.drawn .drawable { stroke-dashoffset: 0; }
+  .anim.drawn .fade { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .anim .drawable { stroke-dasharray: none; stroke-dashoffset: 0; transition: none; }
+    .anim .fade { opacity: 1; transition: none; }
+    .run .wire, .run .outline { transition: none; }
+  }
+
+  /* ---------- install sequence ---------- */
+  .steps { list-style: none; counter-reset: step; margin-top: 2rem; }
+  .steps > li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 1.5rem;
+    padding: 1.75rem 0;
+    border-top: 1px solid var(--ink-faint);
+  }
+  .steps > li:last-child { border-bottom: 1px solid var(--ink-faint); }
+  .step-no {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 0.9;
+    color: var(--ink);
+  }
+  .step-no::before { content: counter(step, decimal-leading-zero); }
+  .step-no::after {
+    content: "/ 03";
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    margin-top: 0.35rem;
+  }
+  .steps > li > div { min-width: 0; }
+  .steps p { max-width: 42em; margin-top: 0.35rem; }
+  .steps p + p { margin-top: 0.7rem; }
+  @media (max-width: 500px) {
+    .steps > li { grid-template-columns: 1fr; gap: 0.5rem; }
+  }
+
+  pre {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1.1rem 1.3rem;
+    margin-top: 1rem;
+    overflow-x: auto;
+    max-width: 44em;
+  }
+  code { font-family: var(--mono); font-size: 0.9em; }
+  p code, li code, td code {
+    background: var(--paper-deep);
+    padding: 0.05em 0.35em;
+    border: 1px solid var(--ink-faint);
+    overflow-wrap: anywhere;
+  }
+
+  /* bill of materials */
+  .bom { margin-top: 2.5rem; max-width: 44em; }
+  .bom-title {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  th, td { text-align: left; padding: 0.5rem 0.75rem; border: 1px solid var(--ink-faint); }
+  th {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--paper-deep);
+  }
+  .bom-total {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    color: var(--ink-faint);
+  }
+  @media (max-width: 500px) {
+    .bom { overflow-x: auto; }
+    table { min-width: 430px; }
+  }
+
+  /* ---------- blocks vs limitation ---------- */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    margin-top: 2rem;
+  }
+  @media (max-width: 820px) { .split { grid-template-columns: 1fr; } }
+
+  .kill-list { list-style: none; margin-top: 1rem; }
+  .kill-list li {
+    padding: 0.7rem 0 0.7rem 2.1rem;
+    border-top: 1px solid var(--ink-faint);
+    position: relative;
+  }
+  .kill-list li:last-child { border-bottom: 1px solid var(--ink-faint); }
+  .kill-list li::before {
+    content: "";
+    position: absolute;
+    left: 0.2rem;
+    top: 1.05rem;
+    width: 14px;
+    height: 8px;
+    border-left: 2.5px solid var(--stamp);
+    border-bottom: 2.5px solid var(--stamp);
+    transform: rotate(-45deg);
+  }
+
+  .redline {
+    border: 1.5px solid var(--red);
+    padding: 1.5rem 1.6rem;
+    position: relative;
+    background: var(--paper);
+  }
+  .redline::before {
+    content: "REDLINE — READ BEFORE BUYING ANYTHING";
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--red);
+    margin-bottom: 0.9rem;
+  }
+  .redline h3 { color: var(--red); }
+  .redline p { margin-top: 0.6rem; }
+
+  /* ---------- DIY CTA ---------- */
+  .cta-block { text-align: left; }
+  .cta-block .lede { margin-bottom: 2rem; }
+  .cta-meta {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    margin-top: 1.1rem;
+  }
+
+  /* ---------- kit teaser ---------- */
+  .kit {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  @media (max-width: 820px) { .kit { grid-template-columns: 1fr; } }
+  .kit-price {
+    border: 1.5px solid var(--ink);
+    padding: 1.4rem 1.6rem;
+    font-family: var(--mono);
+    min-width: 240px;
+  }
+  .kit-price .big {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 2.4rem;
+    line-height: 1;
+    display: block;
+    margin: 0.4rem 0 0.2rem;
+  }
+  .kit-price .fine { font-size: 0.72rem; color: var(--ink-faint); letter-spacing: 0.06em; text-transform: uppercase; }
+  .stamp-soon {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1.5px solid var(--red);
+    padding: 0.3rem 0.7rem;
+    transform: rotate(-2deg);
+    margin-bottom: 1rem;
+  }
+  .kit p { max-width: 38em; margin-top: 0.8rem; }
+  .kit .btn { margin-top: 1.5rem; }
+
+  /* ---------- footer / title block ---------- */
+  footer { border-top: 1.5px solid var(--frame); }
+  .titleblock {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+  .titleblock > div {
+    padding: 0.9rem 1.1rem;
+    border-right: 1px solid var(--frame);
+  }
+  .titleblock > div:last-child { border-right: none; }
+  .titleblock .tb-label {
+    display: block;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.35rem;
+  }
+  .titleblock a { display: block; margin-top: 0.15rem; word-break: break-all; }
+  @media (max-width: 820px) {
+    .titleblock { grid-template-columns: 1fr 1fr; }
+    .titleblock > div { border-bottom: 1px solid var(--frame); }
+    .titleblock > div:nth-child(even) { border-right: none; }
+    .titleblock > div:nth-last-child(-n+2) { border-bottom: none; }
+  }
+  @media (max-width: 500px) {
+    .titleblock { grid-template-columns: 1fr; }
+    .titleblock > div { border-right: none; }
+    .titleblock > div:nth-last-child(-n+2) { border-bottom: 1px solid var(--frame); }
+    .titleblock > div:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="sheet">
+
+  <header class="sheet-head" aria-label="Drawing title strip">
+    <div class="proj">HOLDFAST</div>
+    <div>Dwg no. HB-001</div>
+    <div class="dim">Scale: NTS</div>
+    <div class="dim">Drawn by: you, honestly</div>
+    <div>Rev A — 2026</div>
+  </header>
+
+  <main id="main">
+
+    <!-- ================= HERO ================= -->
+    <section aria-labelledby="hero-h">
+      <p class="eyebrow">Sheet 1 of 1 — whole-home ad blocking</p>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 id="hero-h">One box on the router.<br>Every device covered.</h1>
+          <p class="lede">Holdfast is a small device — a Raspberry Pi — that plugs into your home router and blocks ads and trackers for <strong>every device on your network</strong>: phones, TVs, laptops, guests. No app installs per device, no subscriptions, no cloud account. Your data never leaves your home. The whole thing fits on one drawing.</p>
+        </div>
+
+        <figure class="fig">
+          <!-- ============ DESKTOP SCHEMATIC ============ -->
+          <svg class="schematic-d anim" id="schemD" viewBox="0 0 980 560" role="img" aria-labelledby="schemD-t schemD-d">
+            <title id="schemD-t">Household wiring schematic</title>
+            <desc id="schemD-d">The internet connects to your router. One ethernet run connects the router to the Holdfast Brick, which answers DNS on port 53 and hands out addresses. Runs radiate from the brick to a phone, a smart TV, a laptop, and a guest's phone. Ad and tracker lookups are blocked at the brick. A dashed property line marks that your data stays inside this boundary.</desc>
+
+            <!-- property boundary -->
+            <rect class="boundary fade" x="245" y="28" width="715" height="508"/>
+            <text class="ann fade" x="600" y="524" text-anchor="middle" letter-spacing="2">— YOUR DATA STAYS INSIDE THIS BOUNDARY —</text>
+            <text class="ann fade" x="252" y="44" font-style="italic">the home</text>
+
+            <!-- internet cloud, outside the boundary -->
+            <g class="fade">
+              <path class="outline" d="M62,168 C42,168 34,150 48,140 C42,120 66,108 82,116 C88,98 122,96 132,112 C152,104 172,118 166,136 C182,142 178,164 158,168 Z"/>
+              <line class="hatch-line" x1="52" y1="160" x2="150" y2="118"/>
+              <line class="hatch-line" x1="58" y1="166" x2="164" y2="126"/>
+              <line class="hatch-line" x1="76" y1="167" x2="168" y2="140"/>
+              <line class="hatch-line" x1="100" y1="168" x2="168" y2="152"/>
+              <text class="lbl" x="104" y="196" text-anchor="middle">INTERNET</text>
+              <text class="ann" x="104" y="212" text-anchor="middle" font-style="italic">everything out here</text>
+            </g>
+
+            <!-- WAN line: cloud to router -->
+            <path class="wire drawable" pathLength="1" d="M168,150 L305,150"/>
+            <text class="ann halo fade" x="238" y="174" text-anchor="middle">DNS-over-TLS :853</text>
+            <text class="ann halo fade" x="238" y="188" text-anchor="middle" font-style="italic">lookups leave encrypted</text>
+
+            <!-- router -->
+            <g class="fade">
+              <rect class="outline" x="305" y="127" width="112" height="46"/>
+              <line class="outline" x1="325" y1="127" x2="325" y2="109"/>
+              <line class="outline" x1="397" y1="127" x2="397" y2="109"/>
+              <text class="lbl" x="361" y="155" text-anchor="middle">ROUTER</text>
+            </g>
+
+            <!-- ethernet run: router to brick -->
+            <path class="wire drawable" pathLength="1" d="M361,173 L361,299"/>
+            <g class="fade">
+              <line class="hatch-line" x1="346" y1="185" x2="346" y2="290" stroke-dasharray="2 3"/>
+              <path class="hatch-line" d="M342,190 L346,184 L350,190" fill="none"/>
+              <path class="hatch-line" d="M342,285 L346,291 L350,285" fill="none"/>
+              <text class="ann" x="376" y="232">one ethernet run</text>
+              <text class="ann" x="376" y="246" font-style="italic">any LAN port — wired, always</text>
+            </g>
+
+            <!-- blocked stub -->
+            <g class="fade">
+              <path class="redwire" d="M232,318 L288,318"/>
+              <line x1="288" y1="310" x2="304" y2="326" stroke="var(--red)" stroke-width="2.5"/>
+              <line x1="304" y1="310" x2="288" y2="326" stroke="var(--red)" stroke-width="2.5"/>
+              <text class="ann-red" x="160" y="308" text-anchor="middle">ads &amp; trackers</text>
+              <text class="ann-red" x="160" y="322" text-anchor="middle">— blocked here</text>
+            </g>
+
+            <!-- the brick -->
+            <g class="fade">
+              <rect class="outline" x="296" y="299" width="130" height="60" stroke-width="2.5"/>
+              <text class="lbl" x="361" y="324" text-anchor="middle">HOLDFAST</text>
+              <text class="ann" x="361" y="342" text-anchor="middle">DNS :53 · DHCP</text>
+            </g>
+
+            <!-- callout: what's inside -->
+            <g class="fade">
+              <path class="hatch-line" d="M296,352 L212,412" fill="none"/>
+              <circle cx="296" cy="352" r="2.2" fill="var(--ink-faint)"/>
+              <text class="ann" x="88" y="428">AdGuard Home + Unbound</text>
+              <text class="ann" x="88" y="442" font-style="italic">on a Raspberry Pi you own</text>
+            </g>
+
+            <!-- run: phone -->
+            <g class="run" tabindex="0" aria-label="Run to phone — protected, no app installed">
+              <path class="wire drawable" pathLength="1" d="M426,312 L560,312 L560,120 L648,120"/>
+              <rect class="outline" x="648" y="88" width="36" height="64" rx="5"/>
+              <circle class="outline" cx="666" cy="142" r="2.6"/>
+              <text class="lbl" x="666" y="172" text-anchor="middle">PHONE</text>
+              <text class="ann" x="700" y="124">no app installed</text>
+            </g>
+
+            <!-- run: smart TV -->
+            <g class="run" tabindex="0" aria-label="Run to smart TV — protected, home-screen ads gone">
+              <path class="wire drawable" pathLength="1" d="M426,326 L620,326 L620,300 L700,300"/>
+              <rect class="outline" x="700" y="270" width="100" height="58"/>
+              <line class="outline" x1="740" y1="328" x2="736" y2="342"/>
+              <line class="outline" x1="760" y1="328" x2="764" y2="342"/>
+              <text class="lbl" x="750" y="362" text-anchor="middle">SMART TV</text>
+              <text class="ann" x="812" y="290">home-screen</text>
+              <text class="ann" x="812" y="304">ads gone</text>
+            </g>
+
+            <!-- run: laptop -->
+            <g class="run" tabindex="0" aria-label="Run to laptop — protected">
+              <path class="wire drawable" pathLength="1" d="M426,340 L600,340 L600,436 L688,436"/>
+              <path class="outline" d="M694,412 L748,412 L748,444 L694,444 Z"/>
+              <path class="outline" d="M686,444 L756,444 L762,452 L680,452 Z"/>
+              <text class="lbl" x="721" y="474" text-anchor="middle">LAPTOP</text>
+            </g>
+
+            <!-- run: guest -->
+            <g class="run" tabindex="0" aria-label="Run to a guest's phone — covered automatically">
+              <path class="wire drawable" pathLength="1" d="M361,359 L361,470 L470,470"/>
+              <rect class="outline" x="470" y="442" width="30" height="54" rx="4"/>
+              <circle class="outline" cx="485" cy="488" r="2.2"/>
+              <text class="lbl" x="518" y="462">GUEST'S PHONE</text>
+              <text class="ann" x="518" y="478" font-style="italic">covered automatically</text>
+            </g>
+
+            <!-- shared note -->
+            <text class="ann fade" x="812" y="180" font-style="italic">every device answered</text>
+            <text class="ann fade" x="812" y="194" font-style="italic">by the brick — no</text>
+            <text class="ann fade" x="812" y="208" font-style="italic">per-device setup</text>
+          </svg>
+
+          <!-- ============ MOBILE SCHEMATIC ============ -->
+          <svg class="schematic-m anim" id="schemM" viewBox="0 0 360 600" role="img" aria-labelledby="schemM-t schemM-d">
+            <title id="schemM-t">Household wiring schematic, simplified</title>
+            <desc id="schemM-d">The internet connects down to your router, then one ethernet run to the Holdfast Brick, which answers DNS on port 53 for a phone, a TV, and a laptop. Ad lookups are blocked at the brick. A dashed line marks that your data stays inside the home.</desc>
+
+            <!-- internet -->
+            <g class="fade">
+              <path class="outline" d="M140,52 C124,52 118,38 129,31 C124,16 143,7 155,13 C160,-1 186,-2 194,10 C209,4 224,15 219,28 C231,33 228,49 213,52 Z"/>
+              <text class="lbl" x="180" y="74" text-anchor="middle">INTERNET</text>
+            </g>
+
+            <path class="wire drawable" pathLength="1" d="M180,80 L180,140"/>
+            <text class="ann fade" x="192" y="106">DoT :853</text>
+            <text class="ann fade" x="192" y="120" font-style="italic">encrypted out</text>
+
+            <!-- boundary -->
+            <rect class="boundary fade" x="16" y="126" width="328" height="452"/>
+            <text class="ann fade" x="180" y="568" text-anchor="middle" font-size="9.5">— YOUR DATA STAYS INSIDE THIS BOUNDARY —</text>
+
+            <!-- router -->
+            <g class="fade">
+              <rect class="outline" x="122" y="140" width="116" height="44"/>
+              <text class="lbl" x="180" y="167" text-anchor="middle">ROUTER</text>
+            </g>
+
+            <path class="wire drawable" pathLength="1" d="M180,184 L180,252"/>
+            <text class="ann fade" x="192" y="214">one ethernet run</text>
+
+            <!-- blocked stub -->
+            <g class="fade">
+              <path class="redwire" d="M50,282 L96,282"/>
+              <line x1="96" y1="275" x2="110" y2="289" stroke="var(--red)" stroke-width="2.5"/>
+              <line x1="110" y1="275" x2="96" y2="289" stroke="var(--red)" stroke-width="2.5"/>
+              <text class="ann-red" x="66" y="268" text-anchor="middle">blocked here</text>
+            </g>
+
+            <!-- brick -->
+            <g class="fade">
+              <rect class="outline" x="104" y="252" width="152" height="58" stroke-width="2.5"/>
+              <text class="lbl" x="180" y="277" text-anchor="middle">HOLDFAST</text>
+              <text class="ann" x="180" y="294" text-anchor="middle">DNS :53 · DHCP</text>
+            </g>
+
+            <!-- device runs -->
+            <path class="wire drawable" pathLength="1" d="M140,310 L140,360 L86,360 L86,414"/>
+            <path class="wire drawable" pathLength="1" d="M180,310 L180,410"/>
+            <path class="wire drawable" pathLength="1" d="M220,310 L220,360 L276,360 L276,420"/>
+
+            <g class="fade">
+              <rect class="outline" x="71" y="414" width="30" height="54" rx="4"/>
+              <circle class="outline" cx="86" cy="460" r="2.2"/>
+              <text class="lbl" x="86" y="488" text-anchor="middle" font-size="10.5">PHONE</text>
+            </g>
+            <g class="fade">
+              <rect class="outline" x="146" y="410" width="68" height="42"/>
+              <line class="outline" x1="172" y1="452" x2="169" y2="462"/>
+              <line class="outline" x1="188" y1="452" x2="191" y2="462"/>
+              <text class="lbl" x="180" y="480" text-anchor="middle" font-size="10.5">TV</text>
+            </g>
+            <g class="fade">
+              <path class="outline" d="M254,420 L298,420 L298,446 L254,446 Z"/>
+              <path class="outline" d="M248,446 L304,446 L309,453 L243,453 Z"/>
+              <text class="lbl" x="276" y="474" text-anchor="middle" font-size="10.5">LAPTOP</text>
+            </g>
+
+            <text class="ann fade" x="180" y="524" text-anchor="middle" font-style="italic">…and every other device on the WiFi</text>
+          </svg>
+
+          <figcaption class="fig-caption">
+            <span>Fig. 1 — how a Holdfast Brick sits in a home network</span>
+            <span>hover or tab across a run to trace it</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ================= INSTALL SEQUENCE ================= -->
+    <section aria-labelledby="install-h">
+      <p class="eyebrow">Section 2 — install sequence</p>
+      <h2 id="install-h">Three steps. One evening. Done.</h2>
+      <p class="lede">The order matters, which is why it's numbered. Everything here is the real procedure — the full walkthrough with screenshots lives in the setup guide.</p>
+
+      <ol class="steps">
+        <li>
+          <span class="step-no" aria-hidden="true"></span>
+          <div>
+            <h3>Flash the SD card</h3>
+            <p>Install Raspberry Pi Imager on your computer and choose <strong>Raspberry Pi OS Lite (64-bit)</strong>. In the Imager's settings (the gear icon), <strong>enable SSH</strong> and set a username and password. Write the card, then put it in the Pi.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-no" aria-hidden="true"></span>
+          <div>
+            <h3>Plug the brick into your router</h3>
+            <p>Connect the ethernet cable from the Pi to any LAN port on your router, then plug in power. Give it a minute to boot. Wired is required — the brick will serve your whole network and must not depend on WiFi.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-no" aria-hidden="true"></span>
+          <div>
+            <h3>Run one script, then pair the app</h3>
+            <p>Find the Pi's address in your router's device list (or try <code>ssh &lt;username&gt;@raspberrypi.local</code>), then:</p>
+            <pre><code>ssh &lt;username&gt;@&lt;pi-address&gt;
+git clone https://github.com/MarwanNakhaleh/PrivacyBrickAPI.git
+cd PrivacyBrickAPI
+sudo bash deploy/provision.sh</code></pre>
+            <p>The script installs and wires everything — AdGuard Home, Unbound with encrypted DNS, and the Holdfast API — and it's safe to re-run any time. Finish AdGuard's one-time wizard at <code>http://&lt;pi-address&gt;:3000</code> (web port <strong>3000</strong>, DNS port <strong>53</strong>), then run the script once more. After that, the iOS app finds the brick on your WiFi by itself — enter the 6-digit pairing code printed at the end of the install, and flip on whole-home protection from the app.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="bom">
+        <p class="bom-title">Bill of materials</p>
+        <table>
+          <caption class="visually-hidden" style="position:absolute;left:-9999px;">Parts needed to build a Holdfast Brick</caption>
+          <thead>
+            <tr><th scope="col">Ref</th><th scope="col">Qty</th><th scope="col">Part</th><th scope="col">Note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A</td><td>1</td><td>Raspberry Pi 5 (2&nbsp;GB)</td><td>anything with an ethernet port</td></tr>
+            <tr><td>B</td><td>1</td><td>microSD card, 16&nbsp;GB or larger</td><td>—</td></tr>
+            <tr><td>C</td><td>1</td><td>Pi power supply</td><td>official 27 W USB-C</td></tr>
+            <tr><td>D</td><td>1</td><td>Ethernet cable</td><td>the "one ethernet run" in Fig.&nbsp;1</td></tr>
+          </tbody>
+        </table>
+        <p class="bom-total">Total: roughly $70–90. Plus a phone or computer on the same WiFi, which you already own.</p>
+      </div>
+    </section>
+
+    <!-- ================= BLOCKS VS LIMITATION ================= -->
+    <section aria-labelledby="blocks-h">
+      <p class="eyebrow">Section 3 — what dies at the brick, and what doesn't</p>
+      <h2 id="blocks-h">Inspected and passed — mostly</h2>
+
+      <div class="split">
+        <div>
+          <h3>Stopped at the brick</h3>
+          <ul class="kill-list">
+            <li>Web ads, on every browser in the house</li>
+            <li>In-app banner ads</li>
+            <li>Trackers and telemetry phoning home</li>
+            <li>Smart-TV home-screen ads</li>
+            <li>All of the above for guests, automatically</li>
+          </ul>
+        </div>
+
+        <div class="redline">
+          <h3>Streaming video ads get through</h3>
+          <p>In-stream video ads on streaming services — Disney+, Hulu, YouTube — are stitched into the video server-side and can't be removed by DNS blocking. Nothing that works the way Holdfast works can remove them, and anything that claims otherwise deserves a hard look.</p>
+          <p>Everything in the left column, though, is gone.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= DIY CTA ================= -->
+    <section class="cta-block" aria-labelledby="diy-h">
+      <p class="eyebrow">Section 4 — the do-it-yourself route</p>
+      <h2 id="diy-h">Set it up yourself</h2>
+      <p class="lede">The software is free and open source, the parts cost $70–90, and the guide walks you through every step in Fig.&nbsp;1 — including handing DHCP to the brick so every device is protected without touching any of them. It's your network; the brick just works for it.</p>
+      <a class="btn btn-stamp" href="../../guide.html">Set it up yourself →</a>
+      <p class="cta-meta">Full guide: flashing, provisioning, app pairing, whole-home DHCP, and an Xfinity workaround.</p>
+    </section>
+
+    <!-- ================= KIT TEASER ================= -->
+    <section aria-labelledby="kit-h">
+      <p class="eyebrow">Section 5 — the pre-built route</p>
+      <div class="kit">
+        <div>
+          <span class="stamp-soon">Coming soon</span>
+          <h2 id="kit-h">Or skip the soldering-free soldering</h2>
+          <p>A pre-built Holdfast Brick kit: pre-flashed, pre-configured. Plug it into your router, open the app, scan the pairing code, done. Same open-source software, zero terminal time.</p>
+          <p>No checkout exists yet and there's no waitlist form to fill in — just send an email and you'll hear when it's ready.</p>
+          <a class="btn" href="mailto:closeityourself@gmail.com?subject=Holdfast%20Brick%20kit%20—%20email%20me%20when%20it%27s%20ready">Email me when it's ready</a>
+        </div>
+        <div class="kit-price">
+          <span class="fine">Pricing promise</span>
+          <span class="big">Parts + $50</span>
+          <span class="fine">flat, no subscription, ever</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER / TITLE BLOCK ================= -->
+  <footer aria-label="Title block">
+    <div class="titleblock">
+      <div>
+        <span class="tb-label">Project</span>
+        HOLDFAST — whole-home ad &amp; tracker blocking. Open source, no cloud account, data stays home.
+      </div>
+      <div>
+        <span class="tb-label">Runs on the Pi</span>
+        <a href="https://github.com/MarwanNakhaleh/PrivacyBrickAPI">github.com/MarwanNakhaleh/PrivacyBrickAPI</a>
+      </div>
+      <div>
+        <span class="tb-label">The iOS app</span>
+        <a href="https://github.com/MarwanNakhaleh/PrivacyBrickUI-iOS">github.com/MarwanNakhaleh/PrivacyBrickUI-iOS</a>
+      </div>
+      <div>
+        <span class="tb-label">Sheet</span>
+        HB-001 · 1 of 1 · Rev A<br>Scale: NTS · © 2026
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var svgs = document.querySelectorAll("svg.anim");
+    if (reduce || !("IntersectionObserver" in window)) {
+      svgs.forEach(function (s) { s.classList.add("drawn"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("drawn");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.25 });
+    svgs.forEach(function (s) { io.observe(s); });
+  })();
+</script>
+</body>
+</html>

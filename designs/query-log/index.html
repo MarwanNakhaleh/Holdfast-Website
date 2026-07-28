@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Holdfast — every device you own phones home. This is the log.</title>
+<meta name="description" content="Holdfast is a small box that plugs into your router and blocks ads and trackers for every device on your network. No apps per device, no subscriptions, no cloud account.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,400;0,500;0,700;0,800;1,400;1,700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:   #F1F5F7;
+    --card:    #FCFDFE;
+    --ink:     #1C2B36;
+    --muted:   #5A6E7C;
+    --rule:    #D4E1EA;
+    --red:     #C41E3A;
+    --red-ink: #A5152D;
+    --red-soft: rgba(196,30,58,.07);
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --serif: "Besley", Georgia, serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  /* ---------- header ---------- */
+  .site-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem 0 0;
+  }
+  .wordmark {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .wordmark .brick { color: var(--red); }
+  .site-head nav {
+    display: flex;
+    gap: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+  }
+  .site-head nav a {
+    text-decoration: none;
+    color: var(--muted);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 1px;
+  }
+  .site-head nav a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+  /* ---------- hero ---------- */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 3rem;
+    align-items: center;
+    padding: 4.5rem 0 5rem;
+  }
+  .hero-copy h1 {
+    font-size: clamp(2.1rem, 4.6vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .hero-copy h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--red);
+  }
+  .hero-copy .lede {
+    margin-top: 1.4rem;
+    font-size: 1.0625rem;
+    color: var(--muted);
+    max-width: 34ch;
+  }
+  .hero-copy .lede strong { color: var(--ink); font-weight: 500; }
+  .hero-ctas {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 3px;
+    border: 1.5px solid var(--ink);
+    transition: background-color .15s ease, color .15s ease;
+  }
+  .btn-solid { background: var(--ink); color: var(--paper); }
+  .btn-solid:hover { background: #2C4252; border-color: #2C4252; }
+  .btn-ghost { background: transparent; color: var(--ink); }
+  .btn-ghost:hover { background: rgba(28,43,54,.06); }
+
+  /* ---------- the ledger log ---------- */
+  .ledger {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(28,43,54,.05), 0 12px 32px -18px rgba(28,43,54,.25);
+    overflow: hidden;
+  }
+  .ledger-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .ledger-head .title { font-weight: 600; color: var(--ink); }
+  .ledger-head .tally { font-variant-numeric: tabular-nums; }
+  .ledger-head .tally b { color: var(--red); font-weight: 600; }
+  .log-pause {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.2rem 0.55rem;
+    cursor: pointer;
+  }
+  .log-pause:hover { color: var(--ink); border-color: var(--muted); }
+
+  .log {
+    list-style: none;
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    line-height: 1;
+    position: relative;
+    /* the classic ledger margin line */
+    background:
+      linear-gradient(var(--red) 0 0) no-repeat 5.4rem 0 / 1.5px 100%,
+      var(--card);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 4.6rem minmax(0,6.4rem) minmax(0,1fr) auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.72rem 1rem 0.72rem 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    min-height: 2.4rem;
+  }
+  .row:last-child { border-bottom: 0; }
+  .t   { color: var(--muted); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+  .dev { color: var(--muted); font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dom { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+  .dom s {
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+  }
+  .dom s::after {
+    content: "";
+    position: absolute;
+    left: 0; top: 52%;
+    height: 1.5px;
+    width: 0;
+    background: var(--red);
+  }
+  .row.struck .dom s { color: var(--muted); }
+  .row.struck .dom s::after { width: 100%; }
+  .row.animate .dom s::after { transition: width .3s ease-out; }
+
+  .verdict { justify-self: end; white-space: nowrap; }
+  .verdict.pass {
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+  .verdict.pass::before { content: "✓ "; color: #7B94A5; }
+  .verdict.blocked {
+    color: var(--red-ink);
+    background: var(--red-soft);
+    border: 1px solid rgba(196,30,58,.45);
+    border-radius: 2px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 0.22rem 0.45rem;
+    transform: rotate(-1.5deg);
+  }
+  .verdict.hidden { visibility: hidden; }
+  @keyframes stamp {
+    0%   { opacity: 0; transform: scale(1.7) rotate(-7deg); }
+    55%  { opacity: 1; transform: scale(0.94) rotate(-1deg); }
+    100% { opacity: 1; transform: scale(1) rotate(-1.5deg); }
+  }
+  .row.animate .verdict.blocked { animation: stamp .32s ease-out both; }
+
+  .caret {
+    display: inline-block;
+    width: 0.55em; height: 1.1em;
+    background: var(--ink);
+    vertical-align: text-bottom;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .ledger-foot {
+    padding: 0.55rem 1rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .caret { animation: none; }
+    .row.animate .verdict.blocked { animation: none; }
+    .row.animate .dom s::after { transition: none; }
+  }
+
+  /* ---------- sections ---------- */
+  .section { padding: 4.5rem 0; border-top: 1px solid var(--rule); }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1.1rem;
+  }
+  .section h2 {
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 1.2rem;
+    max-width: 24ch;
+    text-wrap: balance;
+  }
+  .prose {
+    max-width: 62ch;
+    color: var(--ink);
+  }
+  .prose + .prose { margin-top: 1rem; }
+  .prose code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: rgba(28,43,54,.06);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+    white-space: nowrap;
+  }
+  .prose code.dead { color: var(--red-ink); background: var(--red-soft); }
+
+  /* blocks vs limitation */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    margin-top: 2rem;
+  }
+  .col h3 {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .col h3.kills { color: var(--ink); }
+  .col h3.cant  { color: var(--red-ink); }
+  .col ul { list-style: none; }
+  .col li {
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 1rem;
+  }
+  .col li:first-child { border-top: 1px solid var(--rule); }
+  .col .why {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  /* DIY */
+  .diy-grid {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    gap: 3rem;
+    align-items: start;
+  }
+  .parts {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    list-style: none;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--card);
+  }
+  .parts li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .parts li:last-child { border-bottom: 0; }
+  .parts .sum { font-weight: 600; }
+  .parts .sum .amt { color: var(--red-ink); }
+
+  /* kit */
+  .kit-price {
+    font-family: var(--mono);
+    font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+    margin: 1.6rem 0 1.8rem;
+    padding: 1rem 1.25rem;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--red);
+    border-radius: 0 6px 6px 0;
+    max-width: 34rem;
+  }
+  .kit-price b { color: var(--red-ink); font-weight: 600; }
+  .soon {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--red-ink);
+    border: 1px solid rgba(196,30,58,.45);
+    background: var(--red-soft);
+    border-radius: 2px;
+    padding: 0.25rem 0.5rem;
+    transform: rotate(-1.5deg);
+    margin-left: 0.6rem;
+    vertical-align: middle;
+  }
+
+  /* ---------- footer ---------- */
+  .site-foot {
+    border-top: 1px solid var(--rule);
+    padding: 2.5rem 0 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .site-foot ul { list-style: none; display: flex; flex-wrap: wrap; gap: 1.5rem; }
+  .site-foot a { color: var(--muted); }
+  .site-foot a:hover { color: var(--ink); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; gap: 2.5rem; padding: 3rem 0 3.5rem; }
+    .hero-copy .lede { max-width: 52ch; }
+    .diy-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .two-col { grid-template-columns: 1fr; gap: 2rem; }
+    .section { padding: 3.25rem 0; }
+  }
+  @media (max-width: 560px) {
+    .row { grid-template-columns: 3.9rem minmax(0,1fr) auto; gap: 0.6rem; padding-left: 0.75rem; }
+    .dev { display: none; }
+    .log { background: linear-gradient(var(--red) 0 0) no-repeat 4.35rem 0 / 1.5px 100%, var(--card); }
+    .verdict.blocked { font-size: 0.625rem; letter-spacing: 0.04em; }
+    .site-head { flex-direction: column; gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap site-head">
+  <a class="wordmark" href="./">Hold<span class="brick">fast</span></a>
+  <nav aria-label="Site">
+    <a href="../../guide.html">setup guide</a>
+    <a href="https://github.com/MarwanNakhaleh/PrivacyBrickAPI">github</a>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ hero ============ -->
+  <section class="wrap hero" aria-labelledby="hero-h">
+    <div class="hero-copy">
+      <h1 id="hero-h">Every device you own phones home. <em>This is the log.</em></h1>
+      <p class="lede">Holdfast is a small box that plugs into your router and blocks ads and trackers for <strong>every device on your network</strong> — phones, TVs, laptops, guests. No app installs per device, no subscriptions, no cloud account. Your data never leaves your home.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-solid" href="../../guide.html">Set it up yourself</a>
+        <a class="btn btn-ghost" href="#kit">Wait for the kit</a>
+      </div>
+    </div>
+
+    <div class="ledger" aria-labelledby="log-title">
+      <div class="ledger-head">
+        <span class="title" id="log-title">dns query log — live</span>
+        <span class="tally"><b id="blk-count">4,167</b> blocked today</span>
+        <button type="button" class="log-pause" id="log-pause" aria-pressed="false">pause</button>
+      </div>
+      <ul class="log" id="log" role="log" aria-live="off" aria-label="Sample DNS query log. Tracker domains are answered with 0.0.0.0; normal domains resolve.">
+        <li class="row"><span class="t">19:42:07</span><span class="dev">macbook-pro</span><span class="dom">en.wikipedia.org</span><span class="verdict pass">resolved</span></li>
+        <li class="row struck"><span class="t">19:42:09</span><span class="dev">living-room-tv</span><span class="dom"><s>ads.samsungads.com</s></span><span class="verdict blocked">BLOCKED → 0.0.0.0</span></li>
+        <li class="row"><span class="t">19:42:12</span><span class="dev">kids-ipad</span><span class="dom">apple.com</span><span class="verdict pass">resolved</span></li>
+        <li class="row struck"><span class="t">19:42:14</span><span class="dev">kids-ipad</span><span class="dom"><s>app-measurement.com</s></span><span class="verdict blocked">BLOCKED → 0.0.0.0</span></li>
+        <li class="row struck"><span class="t">19:42:15</span><span class="dev">guest-phone</span><span class="dom"><s>graph.facebook.com</s></span><span class="verdict blocked">BLOCKED → 0.0.0.0</span></li>
+        <li class="row"><span class="t">19:42:18</span><span class="dev">living-room-tv</span><span class="dom">netflix.com</span><span class="verdict pass">resolved</span></li>
+        <li class="row struck"><span class="t">19:42:21</span><span class="dev">macbook-pro</span><span class="dom"><s>doubleclick.net</s></span><span class="verdict blocked">BLOCKED → 0.0.0.0</span></li>
+        <li class="row"><span class="t">19:42:24</span><span class="dev">thermostat</span><span class="dom">weather.gov</span><span class="verdict pass">resolved</span></li>
+      </ul>
+      <div class="ledger-foot">upstream: encrypted DNS-over-TLS · everything answered inside your house</div>
+    </div>
+  </section>
+
+  <!-- ============ what's happening ============ -->
+  <section class="wrap section" aria-labelledby="how-h">
+    <p class="eyebrow">What's actually happening</p>
+    <h2 id="how-h">Two sentences, no hand-waving</h2>
+    <p class="prose">Before any app, TV, or gadget can talk to a server, it asks your network to look up a name — that's a DNS query, and your house makes tens of thousands of them a day.</p>
+    <p class="prose">Holdfast answers those lookups itself: known ad and tracker domains get <code class="dead">0.0.0.0</code> — an address that goes nowhere — while everything else resolves normally, encrypted on its way out of your house.</p>
+  </section>
+
+  <!-- ============ blocks vs limitation ============ -->
+  <section class="wrap section" aria-labelledby="blocks-h">
+    <p class="eyebrow">The honest ledger</p>
+    <h2 id="blocks-h">What it kills, and what it can't</h2>
+    <div class="two-col">
+      <div class="col">
+        <h3 class="kills">Gone</h3>
+        <ul>
+          <li>Web ads, in every browser on every device</li>
+          <li>In-app banner ads</li>
+          <li>Trackers and telemetry, phones to smart plugs</li>
+          <li>Smart-TV home-screen ads</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3 class="cant">Still there</h3>
+        <ul>
+          <li>In-stream video ads on Disney+, Hulu, and YouTube
+            <span class="why">Those ads are stitched into the video server-side. No DNS blocker can remove them — ours included. Anyone who tells you otherwise is selling something.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DIY ============ -->
+  <section class="wrap section" aria-labelledby="diy-h">
+    <p class="eyebrow">Do it yourself</p>
+    <div class="diy-grid">
+      <div>
+        <h2 id="diy-h">A Raspberry Pi, one script, an afternoon</h2>
+        <p class="prose">Flash a card, plug the Pi into your router, run <code>sudo bash deploy/provision.sh</code>. The script installs AdGuard Home and Unbound with encrypted DNS, and the iOS app finds the brick on its own — you just enter a 6-digit pairing code.</p>
+        <p class="prose">Everything is open source. The full guide walks through each step, including the router settings that put every device under protection.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-solid" href="../../guide.html">Set it up yourself</a>
+        </div>
+      </div>
+      <ul class="parts" aria-label="Parts list">
+        <li><span>raspberry pi 4 (2 GB) or 3B+</span><span>~$45</span></li>
+        <li><span>microSD card, 16 GB+</span><span>~$8</span></li>
+        <li><span>USB-C power supply</span><span>~$10</span></li>
+        <li><span>ethernet cable</span><span>~$5</span></li>
+        <li class="sum"><span>parts, all in</span><span class="amt">~$70–90</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ kit teaser ============ -->
+  <section class="wrap section" id="kit" aria-labelledby="kit-h">
+    <p class="eyebrow">Or don't</p>
+    <h2 id="kit-h">The kit: pre-flashed, pre-configured <span class="soon">coming soon</span></h2>
+    <p class="prose">Plug it into your router, open the app, scan the pairing code, done. Same open-source software, zero terminal.</p>
+    <p class="kit-price">kit price = cost of the parts <b>+ $50 flat</b></p>
+    <a class="btn btn-ghost" href="mailto:closeityourself@gmail.com?subject=Tell%20me%20when%20the%20Holdfast%20Brick%20kit%20is%20ready">Email me when it's ready</a>
+  </section>
+</main>
+
+<footer class="wrap site-foot">
+  <p>Holdfast — a box that works for you, in your house.</p>
+  <ul>
+    <li><a href="https://github.com/MarwanNakhaleh/PrivacyBrickAPI">PrivacyBrickAPI</a></li>
+    <li><a href="https://github.com/MarwanNakhaleh/PrivacyBrickUI-iOS">PrivacyBrickUI-iOS</a></li>
+    <li><a href="../../guide.html">setup guide</a></li>
+  </ul>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var log = document.getElementById("log");
+  var tally = document.getElementById("blk-count");
+  var pauseBtn = document.getElementById("log-pause");
+
+  // device → plausible lookups, blocked flag per entry
+  var POOL = [
+    { dev: "living-room-tv", dom: "ads.samsungads.com",        blocked: true  },
+    { dev: "living-room-tv", dom: "netflix.com",               blocked: false },
+    { dev: "living-room-tv", dom: "metrics.roku.com",          blocked: true  },
+    { dev: "macbook-pro",    dom: "doubleclick.net",           blocked: true  },
+    { dev: "macbook-pro",    dom: "en.wikipedia.org",          blocked: false },
+    { dev: "macbook-pro",    dom: "github.com",                blocked: false },
+    { dev: "macbook-pro",    dom: "adservice.google.com",      blocked: true  },
+    { dev: "kids-ipad",      dom: "app-measurement.com",       blocked: true  },
+    { dev: "kids-ipad",      dom: "apple.com",                 blocked: false },
+    { dev: "kids-ipad",      dom: "analytics.tiktok.com",      blocked: true  },
+    { dev: "guest-phone",    dom: "graph.facebook.com",        blocked: true  },
+    { dev: "guest-phone",    dom: "open.spotify.com",          blocked: false },
+    { dev: "guest-phone",    dom: "pixel.adsafeprotected.com", blocked: true  },
+    { dev: "thermostat",     dom: "weather.gov",               blocked: false },
+    { dev: "ps5",            dom: "telemetry.playstation.net", blocked: true  },
+    { dev: "ps5",            dom: "playstation.com",           blocked: false },
+    { dev: "iphone",         dom: "nytimes.com",               blocked: false },
+    { dev: "iphone",         dom: "app-analytics.apple.com",   blocked: false },
+    { dev: "smart-plug",     dom: "device-metrics-us.amazon.com", blocked: true }
+  ];
+
+  var MAX_ROWS = 8;
+  var blockedCount = 4167;
+  var paused = false;
+  var running = false;
+  var timer = null;
+  // continue the clock from the last static sample row (19:42:24)
+  var clock = new Date();
+  clock.setHours(19, 42, 24, 0);
+  var order = [];
+
+  function nextEntry() {
+    if (order.length === 0) {
+      order = POOL.slice();
+      for (var i = order.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = order[i]; order[i] = order[j]; order[j] = t;
+      }
+    }
+    return order.pop();
+  }
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  function nextTime() {
+    clock = new Date(clock.getTime() + (1000 + Math.floor(Math.random() * 3000)));
+    return pad(clock.getHours()) + ":" + pad(clock.getMinutes()) + ":" + pad(clock.getSeconds());
+  }
+
+  function bumpTally() {
+    blockedCount += 1;
+    tally.textContent = blockedCount.toLocaleString("en-US");
+  }
+
+  function addRow(entry) {
+    var li = document.createElement("li");
+    li.className = "row animate";
+
+    var t = document.createElement("span");
+    t.className = "t";
+    t.textContent = nextTime();
+
+    var dev = document.createElement("span");
+    dev.className = "dev";
+    dev.textContent = entry.dev;
+
+    var dom = document.createElement("span");
+    dom.className = "dom";
+    var s = document.createElement(entry.blocked ? "s" : "span");
+    dom.appendChild(s);
+    var caret = document.createElement("span");
+    caret.className = "caret";
+    caret.setAttribute("aria-hidden", "true");
+    dom.appendChild(caret);
+
+    var verdict = document.createElement("span");
+    verdict.className = "verdict hidden " + (entry.blocked ? "blocked" : "pass");
+    verdict.textContent = entry.blocked ? "BLOCKED → 0.0.0.0" : "resolved";
+
+    li.appendChild(t); li.appendChild(dev); li.appendChild(dom); li.appendChild(verdict);
+    log.appendChild(li);
+    while (log.children.length > MAX_ROWS) log.removeChild(log.firstElementChild);
+
+    // type the domain, then stamp the verdict
+    var chars = entry.dom.split("");
+    var idx = 0;
+    var typeTimer = setInterval(function () {
+      s.textContent = entry.dom.slice(0, ++idx);
+      if (idx >= chars.length) {
+        clearInterval(typeTimer);
+        caret.remove();
+        setTimeout(function () {
+          verdict.classList.remove("hidden");
+          if (entry.blocked) {
+            li.classList.add("struck");
+            bumpTally();
+          }
+        }, 380);
+      }
+    }, 26);
+  }
+
+  function tick() {
+    if (paused || document.hidden || reduced.matches) return;
+    addRow(nextEntry());
+    schedule();
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(tick, 1500 + Math.random() * 700);
+  }
+
+  function start() {
+    if (running || reduced.matches) return;
+    running = true;
+    schedule();
+  }
+
+  function stop() {
+    running = false;
+    clearTimeout(timer);
+  }
+
+  pauseBtn.addEventListener("click", function () {
+    paused = !paused;
+    pauseBtn.setAttribute("aria-pressed", String(paused));
+    pauseBtn.textContent = paused ? "resume" : "pause";
+    if (!paused) { stop(); start(); }
+  });
+
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && running && !paused) { stop(); start(); }
+  });
+
+  function onMotionChange() {
+    if (reduced.matches) { stop(); pauseBtn.hidden = true; }
+    else { pauseBtn.hidden = false; start(); }
+  }
+  if (reduced.addEventListener) reduced.addEventListener("change", onMotionChange);
+
+  // reduced motion: leave the static sample rows exactly as authored
+  if (reduced.matches) {
+    pauseBtn.hidden = true;
+  } else {
+    start();
+  }
+})();
+</script>
+</body>
+</html>

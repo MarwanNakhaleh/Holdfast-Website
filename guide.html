@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Holdfast — setup guide</title>
+<meta name="description" content="Build your own Holdfast Brick in six steps: flash a Raspberry Pi, plug it into your router, run one script, and block ads for every device on your network.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='8' width='26' height='16' rx='3' fill='%23b03d2e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #faf7f2;
+    --ink: #26211d;
+    --muted: #6b6058;
+    --brick: #b03d2e;
+    --brick-deep: #8c2f22;
+    --brick-soft: #f3e2dc;
+    --line: #e7ddd2;
+    --panel: #fffdf9;
+    --amber-bg: #f8ecd9;
+    --amber-edge: #d9a441;
+    --term-bg: #262220;
+    --term-ink: #efe9e1;
+    --term-dim: #9a8f84;
+    --term-green: #a9c48b;
+    --display: "Bricolage Grotesque", "Avenir Next", sans-serif;
+    --body: "Instrument Sans", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+
+  body {
+    font-family: var(--body);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--brick); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:hover { color: var(--brick-deep); }
+
+  :focus-visible {
+    outline: 2px solid var(--brick);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection { background: var(--brick-soft); }
+
+  /* ---------- Header ---------- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .site-header .bar {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .back-link {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .back-link .arrow { color: var(--brick); margin-right: 0.35rem; }
+  .back-link:hover { color: var(--brick-deep); }
+  .header-tag {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 5rem;
+  }
+  @media (min-width: 68rem) {
+    .layout {
+      display: grid;
+      grid-template-columns: 13.5rem minmax(0, 1fr);
+      gap: 4rem;
+      align-items: start;
+    }
+  }
+
+  /* ---------- On this page ---------- */
+  .toc { font-size: 0.9rem; }
+  @media (min-width: 68rem) {
+    .toc { position: sticky; top: 5.25rem; }
+  }
+  .toc h2 {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+  .toc ol {
+    list-style: none;
+    border-left: 2px solid var(--line);
+  }
+  .toc li a {
+    display: block;
+    padding: 0.28rem 0 0.28rem 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    margin-left: -2px;
+    transition: color 120ms ease, border-color 120ms ease;
+  }
+  .toc li a:hover { color: var(--brick-deep); border-left-color: var(--brick); }
+  @media (max-width: 67.99rem) {
+    .toc { margin-bottom: 2.5rem; }
+    .toc ol { border-left: none; display: flex; flex-wrap: wrap; gap: 0.4rem 0.5rem; }
+    .toc li a {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.25rem 0.8rem;
+      margin-left: 0;
+      background: var(--panel);
+    }
+    .toc li a:hover { border-color: var(--brick); }
+  }
+
+  /* ---------- Article ---------- */
+  article { max-width: 46rem; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--brick);
+    margin-bottom: 0.6rem;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(2rem, 5.5vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    margin-bottom: 1rem;
+  }
+
+  .lede {
+    font-size: 1.15rem;
+    color: var(--muted);
+    margin-bottom: 2.25rem;
+    max-width: 40rem;
+  }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  h2 {
+    font-family: var(--display);
+    font-size: 1.55rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  p + p { margin-top: 0.9rem; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: #efe8de;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 0.1em 0.4em;
+    white-space: nowrap;
+  }
+
+  /* ---------- Honest limitation callout ---------- */
+  .honest {
+    background: var(--amber-bg);
+    border: 1px solid color-mix(in srgb, var(--amber-edge) 45%, var(--amber-bg));
+    border-left: 5px solid var(--amber-edge);
+    border-radius: 10px;
+    padding: 1.4rem 1.5rem;
+    margin: 0 0 3rem;
+  }
+  .honest .eyebrow { color: #92651a; margin-bottom: 0.4rem; }
+  .honest h2 { font-size: 1.25rem; margin-bottom: 0.6rem; }
+  .honest p { font-size: 1rem; }
+  .honest code { background: #f1e2c6; border-color: #e3cd9f; }
+
+  /* ---------- What you need ---------- */
+  .needs {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.5rem 1.6rem;
+    margin-bottom: 3.5rem;
+  }
+  .needs h2 { font-size: 1.3rem; margin-bottom: 1rem; }
+  .needs ul { list-style: none; }
+  .needs li {
+    padding: 0.45rem 0 0.45rem 1.7rem;
+    position: relative;
+  }
+  .needs li + li { border-top: 1px dashed var(--line); }
+  .needs li::before {
+    content: "";
+    position: absolute;
+    left: 0.15rem;
+    top: 0.95rem;
+    width: 0.85rem;
+    height: 0.55rem;
+    background: var(--brick);
+    border-radius: 2px;
+    opacity: 0.85;
+  }
+
+  /* ---------- Steps ---------- */
+  .steps { position: relative; }
+  .step {
+    position: relative;
+    padding-left: 4.4rem;
+    padding-bottom: 3.25rem;
+  }
+  .step::before {
+    content: "";
+    position: absolute;
+    left: 1.6rem;
+    top: 3.1rem;
+    bottom: 0.4rem;
+    width: 2px;
+    background: var(--line);
+  }
+  .step:last-of-type::before { display: none; }
+  .step-brick {
+    position: absolute;
+    left: 0;
+    top: 0.15rem;
+    width: 3.25rem;
+    height: 2.35rem;
+    background: var(--brick);
+    color: #fdf6f0;
+    border-radius: 6px;
+    box-shadow: 0.22rem 0.22rem 0 var(--brick-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+  .step-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.2rem;
+  }
+  .step h2 { margin-bottom: 0.8rem; }
+  .step ol {
+    margin: 0.9rem 0 0 1.3rem;
+  }
+  .step ol li { padding: 0.25rem 0; }
+  .step ol li::marker { font-weight: 600; color: var(--brick); }
+
+  .note {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-top: 1.1rem;
+    font-size: 0.97rem;
+  }
+  .note .note-title {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  /* ---------- Terminal blocks ---------- */
+  .term-caption {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 1.1rem 0 0.4rem;
+  }
+  pre.term {
+    position: relative;
+    background: var(--term-bg);
+    color: var(--term-ink);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    border-radius: 10px;
+    padding: 1.05rem 1.2rem;
+    overflow-x: auto;
+    margin: 0.4rem 0 0.5rem;
+  }
+  pre.term code {
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    font-size: inherit;
+    white-space: pre;
+    color: inherit;
+  }
+  pre.term .line::before {
+    content: "$ ";
+    color: var(--term-green);
+    user-select: none;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--term-ink);
+    background: #3a342f;
+    border: 1px solid #4c443d;
+    border-radius: 6px;
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+    transition: background 120ms ease;
+  }
+  .copy-btn:hover { background: #4c443d; }
+  .copy-btn:focus-visible { outline-color: var(--term-green); }
+  .copy-btn.ok { color: var(--term-green); border-color: var(--term-green); }
+
+  /* ---------- Troubleshooting ---------- */
+  .trouble { margin-top: 0.5rem; }
+  .trouble h2 { margin-bottom: 1.25rem; }
+  .trouble dl {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+    overflow: hidden;
+  }
+  .trouble .row { padding: 1.1rem 1.4rem; }
+  .trouble .row + .row { border-top: 1px solid var(--line); }
+  .trouble dt {
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+  .trouble dt::before {
+    content: "→ ";
+    color: var(--brick);
+  }
+  .trouble dd { color: var(--muted); font-size: 0.99rem; }
+
+  /* ---------- Footer ---------- */
+  .site-footer {
+    border-top: 1px solid var(--line);
+    margin-top: 1rem;
+  }
+  .site-footer .bar {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.6rem 1.25rem 2.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .site-footer a { color: var(--muted); }
+  .site-footer a:hover { color: var(--brick-deep); }
+
+  @media (max-width: 40rem) {
+    .step { padding-left: 0; }
+    .step::before { display: none; }
+    .step-brick {
+      position: static;
+      margin-bottom: 0.7rem;
+      width: 2.9rem;
+      height: 2.1rem;
+      font-size: 1.1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="back-link" href="index.html"><span class="arrow" aria-hidden="true">←</span>Holdfast</a>
+    <span class="header-tag">setup guide</span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <nav class="toc" aria-label="On this page">
+    <h2>On this page</h2>
+    <ol>
+      <li><a href="#what-it-blocks">What it blocks</a></li>
+      <li><a href="#what-you-need">What you need</a></li>
+      <li><a href="#step-1">1 · Flash the SD card</a></li>
+      <li><a href="#step-2">2 · Plug it into your router</a></li>
+      <li><a href="#step-3">3 · Install the software</a></li>
+      <li><a href="#step-4">4 · Finish AdGuard's wizard</a></li>
+      <li><a href="#step-5">5 · Connect the app</a></li>
+      <li><a href="#step-6">6 · Protect every device</a></li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+    </ol>
+  </nav>
+
+  <article>
+
+    <p class="eyebrow">Build your own</p>
+    <h1>Set up your Holdfast Brick</h1>
+    <p class="lede">A small device that plugs into your home router and blocks ads and trackers for <strong>every device on your network</strong> — phones, TVs, laptops, guests. No app installs per device, no subscriptions, no cloud account. Your data never leaves your home. Six steps, one SSH session.</p>
+
+    <aside class="honest" id="what-it-blocks" aria-labelledby="honest-heading">
+      <p class="eyebrow">The honest part</p>
+      <h2 id="honest-heading">What it blocks — and what it can't</h2>
+      <p>Holdfast kills web ads, in-app banners, trackers, telemetry, and smart-TV home-screen ads.</p>
+      <p>It can't remove in-stream video ads on streaming services (Disney+, Hulu, YouTube) — those are stitched into the video server-side, and no DNS blocker can touch them. Anyone who tells you otherwise is selling something.</p>
+    </aside>
+
+    <section class="needs" id="what-you-need" aria-labelledby="needs-heading">
+      <h2 id="needs-heading">What you need (~$70–90)</h2>
+      <ul>
+        <li>Raspberry Pi 5 (2 GB is plenty) — older models with an Ethernet port (Pi 4, 3B+) work too</li>
+        <li>microSD card, 16 GB or larger</li>
+        <li>The official Pi 5 power supply (27 W USB-C)</li>
+        <li>One Ethernet cable</li>
+        <li>A phone or computer on the same WiFi</li>
+      </ul>
+    </section>
+
+    <div class="steps">
+
+      <section class="step" id="step-1" aria-labelledby="step-1-heading">
+        <div class="step-brick" aria-hidden="true">1</div>
+        <p class="step-label">Step 1</p>
+        <h2 id="step-1-heading">Flash the SD card</h2>
+        <ol>
+          <li>Install Raspberry Pi Imager (rpi.org) on your computer.</li>
+          <li>Choose <strong>Raspberry Pi OS Lite (64-bit)</strong> (DietPi also works).</li>
+          <li>In the Imager's settings (gear icon): <strong>enable SSH</strong>, set a username and password, and set the hostname if you like.</li>
+          <li>Write the card, then put it in the Pi.</li>
+        </ol>
+      </section>
+
+      <section class="step" id="step-2" aria-labelledby="step-2-heading">
+        <div class="step-brick" aria-hidden="true">2</div>
+        <p class="step-label">Step 2</p>
+        <h2 id="step-2-heading">Plug the brick into your router</h2>
+        <p>Connect the Ethernet cable from the Pi to any LAN port on your router, then plug in power. Give it a minute to boot. Wired is required — the brick will serve your whole network and must not depend on WiFi.</p>
+      </section>
+
+      <section class="step" id="step-3" aria-labelledby="step-3-heading">
+        <div class="step-brick" aria-hidden="true">3</div>
+        <p class="step-label">Step 3</p>
+        <h2 id="step-3-heading">Install the Holdfast software</h2>
+        <p>Find the Pi's address in your router's device list (or try <code>ssh &lt;username&gt;@raspberrypi.local</code>), then:</p>
+        <p class="term-caption">On your computer</p>
+<pre class="term"><code><span class="line">ssh &lt;username&gt;@&lt;pi-address&gt;</span>
+<span class="line">git clone https://github.com/MarwanNakhaleh/PrivacyBrickAPI.git</span>
+<span class="line">cd PrivacyBrickAPI</span>
+<span class="line">sudo bash deploy/provision.sh</span></code></pre>
+        <p>The script installs and wires everything: AdGuard Home, Unbound with encrypted DNS (DNS-over-TLS to Cloudflare/Quad9), Tailscale (optional remote access), ntopng, and the Holdfast API. It's safe to re-run any time.</p>
+      </section>
+
+      <section class="step" id="step-4" aria-labelledby="step-4-heading">
+        <div class="step-brick" aria-hidden="true">4</div>
+        <p class="step-label">Step 4</p>
+        <h2 id="step-4-heading">Finish AdGuard's one-time wizard</h2>
+        <p>Open <code>http://&lt;pi-address&gt;:3000</code> in a browser. Choose web port <strong>3000</strong> and DNS port <strong>53</strong>, create an admin login, finish the wizard — then run it once more:</p>
+        <p class="term-caption">On the Pi</p>
+<pre class="term"><code><span class="line">sudo bash deploy/provision.sh</span></code></pre>
+        <p>The re-run wires AdGuard to the encrypted DNS chain and creates the app's credentials automatically.</p>
+      </section>
+
+      <section class="step" id="step-5" aria-labelledby="step-5-heading">
+        <div class="step-brick" aria-hidden="true">5</div>
+        <p class="step-label">Step 5</p>
+        <h2 id="step-5-heading">Connect the app</h2>
+        <p>Build <a href="https://github.com/MarwanNakhaleh/PrivacyBrickUI-iOS">PrivacyBrickUI-iOS</a> from Xcode onto your iPhone/iPad (App Store release coming). On first launch the app finds the brick on your WiFi by itself.</p>
+        <p>Enter the 6-digit pairing code — it's printed at the end of the install, or get a fresh one:</p>
+        <p class="term-caption">On the Pi</p>
+<pre class="term"><code><span class="line">sudo privacybrick-pair</span></code></pre>
+        <p>Allow the "local network" permission when iOS asks.</p>
+      </section>
+
+      <section class="step" id="step-6" aria-labelledby="step-6-heading">
+        <div class="step-brick" aria-hidden="true">6</div>
+        <p class="step-label">Step 6</p>
+        <h2 id="step-6-heading">Protect every device</h2>
+        <p>In the app: <strong>Ad Blocking → Whole-home protection</strong>. The guided flow checks your network, walks you through turning off your router's DHCP (with a direct link to your router's admin page), and flips the brick to handing out addresses — after that, every device on the network is protected automatically, including guests.</p>
+        <div class="note">
+          <span class="note-title">Xfinity note</span>
+          xFi gateways can't turn DHCP off. Workaround the app will walk you through: shrink the gateway's DHCP range to a single address (e.g. 10.0.0.253–10.0.0.253); devices then migrate to the brick as their leases renew.
+        </div>
+      </section>
+
+    </div>
+
+    <section class="trouble" id="troubleshooting" aria-labelledby="trouble-heading">
+      <h2 id="trouble-heading">Troubleshooting quick hits</h2>
+      <dl>
+        <div class="row">
+          <dt>App can't find the brick</dt>
+          <dd>Same WiFi? Local Network permission on? (Settings → Privacy &amp; Security → Local Network). VPN off?</dd>
+        </div>
+        <div class="row">
+          <dt>Ads still showing on a device</dt>
+          <dd>It may still hold an old DHCP lease; toggle its WiFi off/on.</dd>
+        </div>
+        <div class="row">
+          <dt>Streaming ads still showing</dt>
+          <dd>Expected; see <a href="#what-it-blocks">the honest limitation above</a>.</dd>
+        </div>
+      </dl>
+    </section>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="bar">
+    <span>Holdfast runs on code you can read.</span>
+    <span>
+      <a href="https://github.com/MarwanNakhaleh/PrivacyBrickAPI">PrivacyBrickAPI</a> ·
+      <a href="https://github.com/MarwanNakhaleh/PrivacyBrickUI-iOS">PrivacyBrickUI-iOS</a> ·
+      <a href="index.html">Home</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+  // Copy buttons: added only when the clipboard API exists, so the page
+  // degrades to plain code blocks without JS or on insecure origins.
+  (function () {
+    if (!(navigator.clipboard && navigator.clipboard.writeText)) return;
+    document.querySelectorAll("pre.term").forEach(function (pre) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.setAttribute("aria-label", "Copy commands to clipboard");
+      btn.addEventListener("click", function () {
+        var text = pre.querySelector("code").textContent.trim();
+        navigator.clipboard.writeText(text).then(function () {
+          btn.textContent = "copied";
+          btn.classList.add("ok");
+          setTimeout(function () {
+            btn.textContent = "copy";
+            btn.classList.remove("ok");
+          }, 2000);
+        }, function () {
+          // Clipboard refused: select the text so the user can copy manually.
+          var range = document.createRange();
+          range.selectNodeContents(pre.querySelector("code"));
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          btn.textContent = "press ⌘C";
+        });
+      });
+      pre.appendChild(btn);
+    });
+  })();
+</script>
+
+</body>
+</html>

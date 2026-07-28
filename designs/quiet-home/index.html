@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holdfast — a quiet home</title>
+<meta name="description" content="Holdfast plugs into your router and blocks ads and trackers on every device in your home. No per-device apps, no subscriptions, no cloud account.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #14111f;
+    --night-deep: #0f0c19;
+    --dusk: #1f1a30;
+    --dusk-edge: rgba(163, 148, 196, 0.16);
+    --paper: #ece4d6;
+    --mist: #a394c4;
+    --mist-dim: #776b93;
+    --lamp: #f2b263;
+    --lamp-deep: #d9924a;
+    --lamp-glow: rgba(242, 178, 99, 0.14);
+    --display: 'Gloock', 'Georgia', serif;
+    --body: 'Source Serif 4', 'Georgia', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    background:
+      radial-gradient(120vw 90vh at 50% -20%, #221c38 0%, var(--night) 55%, var(--night-deep) 100%)
+      var(--night);
+    color: var(--paper);
+    font-family: var(--body);
+    font-weight: 340;
+    font-size: 1.125rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--lamp); color: var(--night); }
+
+  a { color: var(--lamp); text-decoration-color: rgba(242, 178, 99, 0.4); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: var(--lamp); }
+
+  :focus-visible {
+    outline: 2px solid var(--lamp);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .label {
+    font-family: var(--body);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+
+  /* ---------- Hero ---------- */
+
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 1.5rem;
+  }
+
+  /* The noise: scattered ad-shouts and tracker names that fade away */
+  .noise {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+  .noise span {
+    position: absolute;
+    font-family: var(--body);
+    font-style: italic;
+    color: var(--mist-dim);
+    white-space: nowrap;
+    opacity: 0;
+    animation: noise-out 2.1s ease-out forwards;
+  }
+  @keyframes noise-out {
+    0%   { opacity: 0; transform: translateY(6px); }
+    14%  { opacity: 0.55; transform: translateY(0); }
+    55%  { opacity: 0.55; }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }
+  /* positions, sizes, slight rotations, staggered exits */
+  .noise .n1  { top: 8%;  left: 6%;   font-size: 0.95rem; transform-origin: left;  rotate: -2deg; animation-delay: 0.00s; }
+  .noise .n2  { top: 14%; right: 9%;  font-size: 1.2rem;  rotate: 1.5deg;  animation-delay: 0.12s; }
+  .noise .n3  { top: 24%; left: 14%;  font-size: 0.85rem; rotate: 1deg;    animation-delay: 0.05s; }
+  .noise .n4  { top: 21%; right: 24%; font-size: 0.8rem;  rotate: -1deg;   animation-delay: 0.22s; }
+  .noise .n5  { top: 36%; left: 4%;   font-size: 1.05rem; rotate: -3deg;   animation-delay: 0.30s; }
+  .noise .n6  { top: 40%; right: 5%;  font-size: 0.9rem;  rotate: 2deg;    animation-delay: 0.10s; }
+  .noise .n7  { top: 55%; left: 9%;   font-size: 0.8rem;  rotate: 1deg;    animation-delay: 0.36s; }
+  .noise .n8  { top: 58%; right: 12%; font-size: 1.1rem;  rotate: -2deg;   animation-delay: 0.18s; }
+  .noise .n9  { top: 70%; left: 18%;  font-size: 0.9rem;  rotate: 2.5deg;  animation-delay: 0.26s; }
+  .noise .n10 { top: 74%; right: 20%; font-size: 0.85rem; rotate: -1.5deg; animation-delay: 0.40s; }
+  .noise .n11 { top: 84%; left: 7%;   font-size: 1rem;    rotate: 1deg;    animation-delay: 0.15s; }
+  .noise .n12 { top: 86%; right: 6%;  font-size: 0.8rem;  rotate: -2deg;   animation-delay: 0.33s; }
+  .noise .n13 { top: 47%; left: 40%;  font-size: 0.75rem; rotate: 1.5deg;  animation-delay: 0.44s; }
+  .noise .n14 { top: 5%;  left: 42%;  font-size: 0.85rem; rotate: -1deg;   animation-delay: 0.28s; }
+  .noise .n15 { top: 92%; left: 38%;  font-size: 0.9rem;  rotate: 2deg;    animation-delay: 0.20s; }
+
+  /* The brick switches on */
+  .brick {
+    position: relative;
+    width: 46px;
+    height: 64px;
+    margin-bottom: 3rem;
+  }
+  .brick::before {
+    /* the lamplight bloom behind the brick */
+    content: "";
+    position: absolute;
+    inset: -70px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--lamp-glow) 0%, rgba(242, 178, 99, 0.05) 45%, transparent 70%);
+    opacity: 0;
+    animation: bloom 1.4s ease-out 0.9s forwards;
+  }
+  @keyframes bloom {
+    to { opacity: 1; }
+  }
+  .brick svg { display: block; width: 100%; height: 100%; position: relative; }
+  .brick .led {
+    opacity: 0;
+    animation: led-on 0.5s ease-out 0.9s forwards;
+  }
+  @keyframes led-on {
+    0%   { opacity: 0; }
+    60%  { opacity: 1; }
+    75%  { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  .hero-copy {
+    position: relative;
+    max-width: 34rem;
+    opacity: 0;
+    animation: settle 1.2s ease-out 1.5s forwards;
+  }
+  @keyframes settle {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 9vw, 4.4rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.75rem;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--lamp);
+  }
+  .hero .promise {
+    font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+    color: var(--mist);
+    line-height: 1.75;
+    margin: 0 auto;
+    max-width: 30rem;
+  }
+  .hero .brand {
+    display: block;
+    margin-bottom: 2rem;
+  }
+
+  .hero .down {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--mist-dim);
+    font-size: 0.85rem;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    animation: settle 1.2s ease-out 2.2s forwards;
+  }
+  .hero .down:hover { color: var(--lamp); }
+
+  /* Reduced motion: the page simply is quiet */
+  @media (prefers-reduced-motion: reduce) {
+    .noise { display: none; }
+    .brick::before, .brick .led, .hero-copy, .hero .down {
+      animation: none;
+      opacity: 1;
+    }
+    .hero-copy { transform: none; }
+  }
+
+  /* ---------- Sections ---------- */
+
+  section {
+    padding: 7rem 0;
+  }
+  @media (max-width: 640px) {
+    section { padding: 5rem 0; }
+  }
+
+  .section-label {
+    display: block;
+    margin-bottom: 3.5rem;
+    text-align: center;
+  }
+
+  /* Three truths */
+  .truths {
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+  }
+  .truth h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.8rem, 5.5vw, 2.5rem);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+  .truth p {
+    color: var(--mist);
+    max-width: 32rem;
+  }
+  .truth:nth-child(even) {
+    text-align: right;
+  }
+  .truth:nth-child(even) p { margin-left: auto; }
+
+  /* Honest limitation */
+  .honest {
+    border-top: 1px solid var(--dusk-edge);
+    border-bottom: 1px solid var(--dusk-edge);
+    background: linear-gradient(180deg, rgba(31, 26, 48, 0.5), rgba(31, 26, 48, 0));
+  }
+  .honest h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.7rem, 5vw, 2.2rem);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+  .honest p { color: var(--mist); margin-bottom: 1.25rem; }
+  .honest p:last-child { margin-bottom: 0; }
+  .honest strong { color: var(--paper); font-weight: 500; }
+
+  /* CTA */
+  .diy { text-align: center; }
+  .diy h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2rem, 7vw, 3.2rem);
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+  }
+  .diy p {
+    color: var(--mist);
+    max-width: 28rem;
+    margin: 0 auto 2.5rem;
+  }
+
+  .btn {
+    display: inline-block;
+    font-family: var(--body);
+    font-size: 1.05rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.9rem 2.2rem;
+    border-radius: 999px;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn-lamp {
+    background: var(--lamp);
+    color: var(--night-deep);
+    box-shadow: 0 0 32px rgba(242, 178, 99, 0.18);
+  }
+  .btn-lamp:hover {
+    background: var(--lamp-deep);
+    box-shadow: 0 0 44px rgba(242, 178, 99, 0.28);
+  }
+  .btn-ghost {
+    color: var(--lamp);
+    border: 1px solid rgba(242, 178, 99, 0.4);
+  }
+  .btn-ghost:hover {
+    border-color: var(--lamp);
+    background: rgba(242, 178, 99, 0.06);
+  }
+  .btn:focus-visible { outline-offset: 4px; }
+
+  /* Kit teaser */
+  .kit .card {
+    background: var(--dusk);
+    border: 1px solid var(--dusk-edge);
+    border-radius: 14px;
+    padding: 3rem 2.5rem;
+    text-align: center;
+  }
+  @media (max-width: 480px) {
+    .kit .card { padding: 2.25rem 1.5rem; }
+  }
+  .kit h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.7rem, 5vw, 2.3rem);
+    line-height: 1.15;
+    margin: 1rem 0 1.25rem;
+  }
+  .kit p {
+    color: var(--mist);
+    max-width: 26rem;
+    margin: 0 auto 1.25rem;
+  }
+  .kit .price {
+    font-family: var(--display);
+    font-size: 1.35rem;
+    color: var(--paper);
+    margin-bottom: 2rem;
+  }
+  .kit .price em { font-style: normal; color: var(--lamp); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--dusk-edge);
+    padding: 3.5rem 0 4rem;
+    text-align: center;
+    color: var(--mist-dim);
+    font-size: 0.95rem;
+  }
+  footer p { margin-bottom: 1rem; }
+  footer nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 2rem;
+  }
+  footer a { color: var(--mist); }
+  footer a:hover { color: var(--lamp); }
+</style>
+</head>
+<body>
+
+<main>
+  <!-- Hero: the quieting moment -->
+  <header class="hero">
+    <div class="noise" aria-hidden="true">
+      <span class="n1">doubleclick.net</span>
+      <span class="n2">SALE ENDS TONIGHT</span>
+      <span class="n3">googlesyndication.com</span>
+      <span class="n4">Allow notifications?</span>
+      <span class="n5">Your cart misses you</span>
+      <span class="n6">facebook.com/tr</span>
+      <span class="n7">app-measurement.com</span>
+      <span class="n8">Only 3 left in stock</span>
+      <span class="n9">telemetry.microsoft.com</span>
+      <span class="n10">Accept all cookies</span>
+      <span class="n11">Recommended for you</span>
+      <span class="n12">scorecardresearch.com</span>
+      <span class="n13">samsungads.com</span>
+      <span class="n14">Subscribe now</span>
+      <span class="n15">Don't miss out</span>
+    </div>
+
+    <div class="brick" aria-hidden="true">
+      <svg viewBox="0 0 46 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1.5" y="1.5" width="43" height="61" rx="8" fill="#1f1a30" stroke="#a394c4" stroke-opacity="0.45" stroke-width="2"/>
+        <circle class="led" cx="23" cy="16" r="4" fill="#f2b263"/>
+      </svg>
+    </div>
+
+    <div class="hero-copy">
+      <span class="label brand">Holdfast</span>
+      <h1>And then, the house goes <em>quiet</em>.</h1>
+      <p class="promise">A small box that plugs into your router and blocks ads and trackers on every device in your home. Nothing to install on each screen, nothing to subscribe to, nothing leaving the house.</p>
+    </div>
+
+    <a class="down" href="#truths">read on&nbsp;&darr;</a>
+  </header>
+
+  <!-- Three truths -->
+  <section id="truths">
+    <div class="wrap">
+      <span class="label section-label">Three things worth knowing</span>
+      <div class="truths">
+        <article class="truth">
+          <h2>It covers every device.</h2>
+          <p>Phones, TVs, laptops, the tablet in the kitchen, whoever's on your guest WiFi. The brick sits between your network and the internet, so one device protects all of them — no app to put on each one.</p>
+        </article>
+        <article class="truth">
+          <h2>Nothing leaves your home.</h2>
+          <p>The blocking happens on a small computer on your own shelf, and its DNS lookups travel encrypted. No cloud account, no company in the middle, no record of your browsing anywhere but your house.</p>
+        </article>
+        <article class="truth">
+          <h2>There is no subscription.</h2>
+          <p>You buy the parts once. The software is open source and free, forever. No monthly fee, no plan tiers, no account to cancel.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Honest limitation -->
+  <section class="honest">
+    <div class="wrap">
+      <h2>One thing it won't do.</h2>
+      <p>Ads inside Disney+, Hulu, and YouTube streams are stitched into the video itself, on their servers. No DNS blocker can remove those — and anyone who tells you otherwise is selling something.</p>
+      <p>What it does remove: <strong>web ads, in-app banners, trackers, telemetry, and smart-TV home-screen ads</strong> — the everyday noise, on every screen you own.</p>
+    </div>
+  </section>
+
+  <!-- DIY CTA -->
+  <section class="diy">
+    <div class="wrap">
+      <h2>Build your own quiet.</h2>
+      <p>A Raspberry Pi, a microSD card, and an afternoon — about $70–90 in parts. The guide walks you through every step, including the fiddly router bits.</p>
+      <a class="btn btn-lamp" href="../../guide.html">Set it up yourself</a>
+    </div>
+  </section>
+
+  <!-- Kit teaser -->
+  <section class="kit">
+    <div class="wrap">
+      <div class="card">
+        <span class="label">Coming soon</span>
+        <h2>Or let us build it for you.</h2>
+        <p>A pre-built Holdfast Brick: pre-flashed, pre-configured. Plug it into your router, open the app, scan the pairing code — done.</p>
+        <p class="price">The cost of the parts, <em>plus $50 flat</em>. That's the whole price.</p>
+        <a class="btn btn-ghost" href="mailto:closeityourself@gmail.com?subject=Holdfast%20Brick%20kit%20—%20email%20me%20when%20it%27s%20ready">Email me when it's ready</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Holdfast is open source. Read every line before you run it.</p>
+    <nav aria-label="Project repositories">
+      <a href="https://github.com/MarwanNakhaleh/PrivacyBrickAPI">PrivacyBrickAPI — runs on the Pi</a>
+      <a href="https://github.com/MarwanNakhaleh/PrivacyBrickUI-iOS">PrivacyBrickUI-iOS — the app</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
