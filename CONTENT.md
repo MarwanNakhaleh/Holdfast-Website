@@ -26,8 +26,10 @@ but **commands, URLs, ports, and steps must be used verbatim.**
   automatically and pairs with a 6-digit code.
 - Honest limitation (must appear in the guide, not buried): in-stream video
   ads on streaming services (Disney+, Hulu, YouTube) are stitched into the
-  video server-side and can't be removed by DNS blocking. What it kills:
-  web ads, in-app banners, trackers, telemetry, smart-TV home-screen ads.
+  video server-side and **can't be reliably blocked by DNS** — sometimes a
+  blocklist catches them, sometimes it doesn't. We won't promise streaming
+  ads are gone. What works dependably: web ads, in-app banners, trackers,
+  telemetry, smart-TV home-screen ads.
 - Repos: https://github.com/MarwanNakhaleh/PrivacyBrickAPI (runs on the Pi),
   https://github.com/MarwanNakhaleh/PrivacyBrickUI-iOS (the app).
 
