@@ -30,8 +30,8 @@ but **commands, URLs, ports, and steps must be used verbatim.**
   blocklist catches them, sometimes it doesn't. We won't promise streaming
   ads are gone. What works dependably: web ads, in-app banners, trackers,
   telemetry, smart-TV home-screen ads.
-- Repos: https://github.com/MarwanNakhaleh/PrivacyBrickAPI (runs on the Pi),
-  https://github.com/MarwanNakhaleh/PrivacyBrickUI-iOS (the app).
+- Repos: https://github.com/MarwanNakhaleh/HoldfastBrickAPI (runs on the Pi),
+  https://github.com/MarwanNakhaleh/HoldfastBrickUI-iOS (the app).
 
 ## Kit teaser (future product — "coming soon", no checkout)
 
@@ -68,8 +68,8 @@ Find the Pi's address in your router's device list (or try
 
 ```
 ssh <username>@<pi-address>
-git clone https://github.com/MarwanNakhaleh/PrivacyBrickAPI.git
-cd PrivacyBrickAPI
+git clone https://github.com/MarwanNakhaleh/HoldfastBrickAPI.git
+cd HoldfastBrickAPI
 sudo bash deploy/provision.sh
 ```
 
@@ -84,10 +84,10 @@ DNS port **53**, create an admin login, finish the wizard — then run
 encrypted DNS chain and creates the app's credentials automatically.
 
 ### Step 5 — Connect the app
-Build PrivacyBrickUI-iOS from Xcode onto your iPhone/iPad (App Store release
+Build HoldfastBrickUI-iOS from Xcode onto your iPhone/iPad (App Store release
 coming). On first launch the app finds the brick on your WiFi by itself.
 Enter the 6-digit pairing code — it's printed at the end of the install, or
-run `sudo privacybrick-pair` on the Pi for a fresh one. Allow the "local
+run `sudo holdfastbrick-pair` on the Pi for a fresh one. Allow the "local
 network" permission when iOS asks.
 
 ### Step 6 — Protect every device

@@ -1,6 +1,6 @@
 # Holdfast-Website
 
-Static site for [Holdfast](https://github.com/MarwanNakhaleh/PrivacyBrickAPI):
+Static site for [Holdfast](https://github.com/MarwanNakhaleh/HoldfastBrickAPI):
 what it is, how to build one yourself, and (eventually) the pre-built kit.
 
 No build step — plain HTML/CSS/JS. Open `index.html` in a browser, or serve

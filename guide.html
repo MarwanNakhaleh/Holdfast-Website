@@ -489,8 +489,8 @@
         <p>Find the Pi's address in your router's device list (or try <code>ssh &lt;username&gt;@raspberrypi.local</code>), then:</p>
         <p class="term-caption">On your computer</p>
 <pre class="term"><code><span class="line">ssh &lt;username&gt;@&lt;pi-address&gt;</span>
-<span class="line">git clone https://github.com/MarwanNakhaleh/PrivacyBrickAPI.git</span>
-<span class="line">cd PrivacyBrickAPI</span>
+<span class="line">git clone https://github.com/MarwanNakhaleh/HoldfastBrickAPI.git</span>
+<span class="line">cd HoldfastBrickAPI</span>
 <span class="line">sudo bash deploy/provision.sh</span></code></pre>
         <p>The script installs and wires everything: AdGuard Home, Unbound with encrypted DNS (DNS-over-TLS to Cloudflare/Quad9), Tailscale (optional remote access), ntopng, and the Holdfast API. It's safe to re-run any time.</p>
       </section>
@@ -509,10 +509,10 @@
         <div class="step-brick" aria-hidden="true">5</div>
         <p class="step-label">Step 5</p>
         <h2 id="step-5-heading">Connect the app</h2>
-        <p>Build <a href="https://github.com/MarwanNakhaleh/PrivacyBrickUI-iOS">PrivacyBrickUI-iOS</a> from Xcode onto your iPhone/iPad (App Store release coming). On first launch the app finds the brick on your WiFi by itself.</p>
+        <p>Build <a href="https://github.com/MarwanNakhaleh/HoldfastBrickUI-iOS">HoldfastBrickUI-iOS</a> from Xcode onto your iPhone/iPad (App Store release coming). On first launch the app finds the brick on your WiFi by itself.</p>
         <p>Enter the 6-digit pairing code — it's printed at the end of the install, or get a fresh one:</p>
         <p class="term-caption">On the Pi</p>
-<pre class="term"><code><span class="line">sudo privacybrick-pair</span></code></pre>
+<pre class="term"><code><span class="line">sudo holdfastbrick-pair</span></code></pre>
         <p>Allow the "local network" permission when iOS asks.</p>
       </section>
 
@@ -554,8 +554,8 @@
   <div class="bar">
     <span>Holdfast runs on code you can read.</span>
     <span>
-      <a href="https://github.com/MarwanNakhaleh/PrivacyBrickAPI">PrivacyBrickAPI</a> ·
-      <a href="https://github.com/MarwanNakhaleh/PrivacyBrickUI-iOS">PrivacyBrickUI-iOS</a> ·
+      <a href="https://github.com/MarwanNakhaleh/HoldfastBrickAPI">HoldfastBrickAPI</a> ·
+      <a href="https://github.com/MarwanNakhaleh/HoldfastBrickUI-iOS">HoldfastBrickUI-iOS</a> ·
       <a href="index.html">Home</a>
     </span>
   </div>
