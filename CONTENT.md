@@ -112,3 +112,19 @@ renew.
 ## Voice
 Plain, direct, warm. Never "revolutionary/seamless/empower". The reader owns
 their network; the brick works for them. Sentence case everywhere.
+
+
+## Reservation offer (deposit test, October 2026)
+
+- Product: Holdfast Brick, prebuilt (Intel N150, 16GB RAM, 512GB SSD, 2.5GbE)
+- Price: $299 one-time, no subscription
+- Reservation: $15 via Stripe, fully refundable anytime, counts toward purchase
+- No ship date is promised anywhere; refund terms live on terms.html
+- Savings math and approved claims: Holdfast/docs/marketing-claims-substantiation.md
+  (YouTube Premium $15.99/mo individual, $26.99/mo family; Google One / iCloud+
+  storage $35.88-$119.88/yr; 1Password Families $71.88/yr — all dated October 2026)
+- Honest limits that MUST stay on the page: in-stream streaming ads, Spotify
+  audio ads, and sponsored content are not blockable; photo backups are the
+  user's responsibility until a backup feature ships
+- Files: reserve.html, privacy.html, terms.html; deposit flow is a Stripe
+  payment link (PAYMENT_LINK_URL placeholder in reserve.html)
